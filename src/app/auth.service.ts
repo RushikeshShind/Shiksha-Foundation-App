@@ -16,8 +16,17 @@ export class AuthService {
 
   constructor(private volunteersService: VolunteersService) {}
 
+  // Login method
   login(username: string, password: string): Observable<boolean> {
     console.log('Attempting login with:', username, password);
+    if (this.users[username] && this.users[username].password === password) {
+      this.loggedIn = true;
+      this.role = this.users[username].role;
+      this.currentUser = null; // Admin user is not a volunteer
+      console.log('Login successful for admin:', username);
+      return of(true);
+    }
+
     return this.volunteersService.getVolunteerByName(username).pipe(
       map((volunteer: Volunteer) => {
         console.log('Fetched volunteer:', volunteer);
@@ -25,7 +34,7 @@ export class AuthService {
           this.loggedIn = true;
           this.role = 'subadmin';
           this.currentUser = volunteer;
-          console.log('Login successful:', username);
+          console.log('Login successful for volunteer:', username);
           return true;
         } else {
           console.log('Login failed:', username);
@@ -39,26 +48,42 @@ export class AuthService {
     );
   }
 
+  // Method to create volunteer credentials
   createVolunteerCredentials(username: string, password: string): void {
     this.users[username] = { password: password, role: 'subadmin' };
     console.log('Volunteer credentials created:', username, password);
   }
 
+  // Method to update or reset admin credentials
+  setAdminCredentials(username: string, password: string): void {
+    if (!username || !password) {
+      console.error('Admin username or password cannot be empty.');
+      return;
+    }
+    this.users['admin'] = { password, role: 'admin' };
+    console.log('Admin credentials updated:', username, password);
+  }
+
+  // Check if the user is logged in
   isLoggedIn(): boolean {
     return this.loggedIn;
   }
 
+  // Get the role of the logged-in user
   getRole(): string | null {
     return this.role;
   }
 
+  // Get the current logged-in volunteer
   getCurrentUser(): Volunteer | null {
     return this.currentUser;
   }
 
+  // Logout the current user
   logout(): void {
     this.loggedIn = false;
     this.role = null;
     this.currentUser = null;
+    console.log('User logged out.');
   }
 }

@@ -1,10 +1,23 @@
-<app-left-sidebar
-  [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
-  (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
-></app-left-sidebar>
+<app-header 
+  *ngIf="showHeader()" 
+  [screenWidth]="screenWidth" 
+  [pageTitle]="pageTitle">
+</app-header>
 
-<app-main
-  [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
-  [screenWidth]="screenWidth()"
-></app-main>
+<div class="main-layout">
+  <!-- Left Sidebar -->
+  <div *ngIf="showSidebar()">
+    <app-left-sidebar
+      [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+      (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
+    ></app-left-sidebar>
+  </div>
 
+  <!-- Main Content -->
+  <div class="content-container">
+    <app-main
+      [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+      [screenWidth]="screenWidth()"
+    ></app-main>
+  </div>
+</div>

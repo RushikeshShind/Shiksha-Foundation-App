@@ -1,0 +1,43 @@
+/* Main Layout */
+.main-layout {
+    display: flex; /* Flexbox layout for sidebar and content */
+    height: 100vh; /* Full height of the viewport */
+  }
+  
+  /* Fixed Header */
+  app-header {
+    position: fixed; /* Fix the header at the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 10; /* Ensure it's above other elements */
+  }
+  
+  /* Fixed Left Sidebar */
+  app-left-sidebar {
+    position: fixed;
+    top: 4rem; /* Push down to account for the fixed header height */
+    left: 0;
+    height: calc(100vh - 4rem); /* Full height minus header */
+    z-index: 9; /* Ensure it's below the header */
+  }
+  
+  /* Scrollable Content */
+  .content-container {
+    margin-top: 20px; /* Add margin to account for the header */
+    margin-left: 10px; /* Adjust for the sidebar width */
+    padding: 1rem;
+    overflow-y: auto; /* Enable vertical scrolling for content */
+    width: calc(100% - 10px); /* Full width minus sidebar */
+    height: calc(100vh - 20px); /* Full height minus header */
+  }
+  
+  /* Adjust for Collapsed Sidebar */
+  .is-left-sidebar-collapsed app-left-sidebar {
+    width: 5rem; /* Collapsed sidebar width */
+  }
+  
+  .is-left-sidebar-collapsed .content-container {
+    margin-left: 5rem; /* Adjust content margin when sidebar is collapsed */
+  }
+  

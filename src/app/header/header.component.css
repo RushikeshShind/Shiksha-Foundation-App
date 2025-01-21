@@ -1,0 +1,58 @@
+/* Desktop Header */
+.desktop-header {
+    position: fixed; /* Fixed position at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* Ensure it's above other elements */
+    background-color: #012a5b; /* Background color */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .desktop-header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .desktop-header .desktop-nav a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .desktop-header .desktop-nav a.active {
+    text-decoration: underline;
+  }
+  
+  /* Mobile Header */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: #012a5b;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-header .back-btn,
+  .mobile-header .profile-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+  
+  .mobile-header .page-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  

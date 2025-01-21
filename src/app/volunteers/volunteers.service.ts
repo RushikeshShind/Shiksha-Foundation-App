@@ -8,7 +8,9 @@ import { tap } from 'rxjs/operators'; // Import tap operator
 })
 export class VolunteersService {
   private apiUrl = 'http://localhost:3000/api/volunteers'; // URL for GET requests to fetch volunteers
-  private postUrl = 'http://localhost:3000/api/volunteer'; // URL for POST request to submit a new volunteer
+  private postUrl = 'http://localhost:3000/api/volunteer'; // URL for POST requests to submit a new volunteer
+  private deleteUrl = 'http://localhost:3000/api/volunteer'; // URL for DELETE requests
+  private updateUrl = 'http://localhost:3000/api/volunteer'; // URL for PUT requests
 
   constructor(private http: HttpClient) {}
 
@@ -29,9 +31,24 @@ export class VolunteersService {
   submitVolunteerData(formData: FormData): Observable<Volunteer> {
     return this.http.post<Volunteer>(this.postUrl, formData);
   }
+
+  // Delete a volunteer by ID (Admin-only)
+  deleteVolunteer(id: string): Observable<void> {
+    console.log(`Deleting volunteer with ID: ${id}`);
+    return this.http.delete<void>(`${this.deleteUrl}/${id}`).pipe(
+      tap(() => console.log(`Volunteer with ID ${id} deleted successfully`))
+    );
+  }
+
+  // Update volunteer details (Admin-only)
+  updateVolunteer(volunteer: Volunteer): Observable<Volunteer> {
+    console.log(`Updating volunteer with ID: ${volunteer.id}`);
+    return this.http.put<Volunteer>(`${this.updateUrl}/${volunteer.id}`, volunteer).pipe(
+      tap((updatedVolunteer: Volunteer) => console.log('Updated volunteer:', updatedVolunteer))
+    );
+  }
 }
 
-// Export the Volunteer interface
 // Export the Volunteer interface
 export interface Volunteer {
   id: string;

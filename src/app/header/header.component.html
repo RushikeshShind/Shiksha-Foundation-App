@@ -1,0 +1,21 @@
+<!-- Desktop Header -->
+<div class="desktop-header" *ngIf="screenWidth() > 768">
+    <div class="logo">SHIKSHA</div>
+    <nav class="desktop-nav">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/students" routerLinkActive="active">Students</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    </nav>
+  </div>
+  
+  <!-- Mobile Header -->
+  <div class="mobile-header" *ngIf="screenWidth() <= 768">
+    <button class="back-btn" (click)="navigateBack()">
+      <i class="fal fa-arrow-left"></i>
+    </button>
+    <div class="page-title">Page Title</div>
+    <button class="profile-btn" (click)="openProfile()">
+      <i class="fal fa-user-circle"></i>
+    </button>
+  </div>
+  

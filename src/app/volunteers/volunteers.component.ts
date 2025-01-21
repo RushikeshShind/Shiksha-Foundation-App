@@ -51,14 +51,19 @@ export class VolunteersComponent implements OnInit {
   }
 
   toggleCard(): void {
-    if (this.isAdmin || this.isSubAdmin) {
+    if (this.isAdmin) {
       this.showCard = !this.showCard;
     } else {
-      alert('You do not have permission to create a volunteer.');
+      alert('Only admins have permission to create a volunteer.');
     }
   }
 
   onSubmit(): void {
+    if (!this.isAdmin) {
+      alert('Only admins can add volunteers.');
+      return;
+    }
+
     if (this.name && this.phoneNumber && this.profileImage) {
       const formData = new FormData();
       formData.append('name', this.name);
@@ -109,6 +114,60 @@ export class VolunteersComponent implements OnInit {
     this.profileImage = null;
     this.imagePreview = null;
     this.errorMessage = null;
+  }
+
+  // Admin-only delete functionality
+  deleteVolunteer(volunteerId: string): void {
+    if (!this.isAdmin) {
+      alert('Only admins can delete volunteers.');
+      return;
+    }
+
+    if (confirm('Are you sure you want to delete this volunteer?')) {
+      this.volunteersService.deleteVolunteer(volunteerId).subscribe(
+        () => {
+          console.log('Volunteer deleted successfully:', volunteerId);
+          this.getVolunteers(); // Refresh the list after deletion
+        },
+        (error) => {
+          console.error('Error deleting volunteer:', error);
+        }
+      );
+    }
+  }
+
+  // Admin-only edit functionality
+  editVolunteer(volunteer: Volunteer): void {
+    if (!this.isAdmin) {
+      alert('Only admins can edit volunteers.');
+      return;
+    }
+
+    // Open a form to edit the volunteer's details
+    this.name = volunteer.name;
+    this.phoneNumber = volunteer.phone_number;
+    this.showCard = true; // Show the form
+
+    // Handle the submission of updated details
+    this.onSubmit = () => {
+      if (this.name && this.phoneNumber) {
+        const updatedVolunteer = { ...volunteer, name: this.name, phone_number: this.phoneNumber };
+        this.volunteersService.updateVolunteer(updatedVolunteer).subscribe(
+          (response: Volunteer) => {
+            console.log('Volunteer updated successfully:', response);
+            this.resetForm();
+            this.getVolunteers();
+            this.showCard = false;
+          },
+          (error) => {
+            console.error('Error updating volunteer:', error);
+            this.errorMessage = 'An error occurred while updating the volunteer data.';
+          }
+        );
+      } else {
+        alert('Please fill out all fields');
+      }
+    };
   }
 }
 
