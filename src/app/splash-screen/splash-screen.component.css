@@ -1,0 +1,138 @@
+.splash-container {
+  position: fixed; /* Ensures the container covers the entire screen */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 0; /* Removes any unwanted margins */
+  padding: 0; /* Removes any unwanted paddings */
+  box-sizing: border-box; /* Ensures consistent sizing */
+}
+
+.background-circle {
+  position: absolute;
+  bottom: -180px; /* Adjusted to center the circle */
+  left: -180px; /* Adjusted to center the circle */
+  width: 360px;
+  height: 360px;
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+  border-radius: 50%;
+  animation: expandCircle 2s ease-in-out forwards;
+}
+
+.extra-circle {
+  position: absolute;
+  top: -180px; /* Adjusted to center the circle */
+  right: -180px; /* Adjusted to center the circle */
+  width: 360px;
+  height: 360px;
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+  border-radius: 50%;
+  animation: expandCircle 2s ease-in-out forwards;
+}
+
+.logo-container {
+  text-align: center;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.logo-container .logo {
+  width: 250px; /* Adjust width as needed for responsiveness */
+  height: auto;
+  animation: bounce 2s infinite;
+}
+
+.logo-container .tagline {
+  color: white;
+  font-size: 1.2rem; /* Adjust font size for better visibility */
+  margin-top: 10px;
+  font-weight: 300;
+  animation: fadeInUp 2s;
+}
+
+@keyframes expandCircle {
+  0% {
+    transform: scale(0) rotate(0deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes mergeAndBlast {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1) translate(50vw, 50vh);
+  }
+  100% {
+    transform: scale(50); /* Adjust scale to cover the entire screen */
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes colorEffect {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.background-circle, .extra-circle {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  animation: expandCircle 2s ease-in-out forwards;
+}
+
+.background-circle.final-effect, .extra-circle.final-effect {
+  animation: colorEffect 1.5s linear forwards;
+}
+
+.background-circle {
+  bottom: -180px; /* Adjusted to center the circle */
+  left: -180px; /* Adjusted to center the circle */
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+}
+
+.extra-circle {
+  top: -180px; /* Adjusted to center the circle */
+  right: -180px; /* Adjusted to center the circle */
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+}

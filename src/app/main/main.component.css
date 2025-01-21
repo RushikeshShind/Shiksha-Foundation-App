@@ -1,0 +1,55 @@
+.body {
+  width: calc(100% - 5rem);
+  margin-left: 25px;
+  z-index: 0;
+  position: relative;
+  top: 0;
+  transition: all 0.5s ease;
+  background: #f4f7fa;
+  padding: 3rem;
+}
+
+.body-trimmed {
+  width: calc(100% - 16.5625rem);
+  margin-left: 40px;
+}
+
+.body-md-screen {
+  width: calc(100% - 5rem);
+  margin-left: 40px;
+}
+
+/* Mobile Header */
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #012a5b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-header .back-btn,
+.mobile-header .profile-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.mobile-header .page-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* Content Padding for Mobile */
+.main-content.mobile-padding {
+  padding-top: 4rem; /* Add padding to avoid overlap with mobile header */
+}

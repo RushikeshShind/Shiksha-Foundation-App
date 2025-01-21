@@ -1,0 +1,48 @@
+<div class="container">
+  <!-- Add Volunteer Button -->
+  <button class="button" (click)="toggleCard()">
+    <span class="label">Add</span>
+  </button>
+
+  <!-- Card that pops up when Add button is clicked -->
+  <div class="card" [class.visible]="showCard">
+    <span class="card__title">Create a Volunteer</span>
+    <form class="card__form" (ngSubmit)="onSubmit()">
+      <input [(ngModel)]="name" name="name" required type="text" placeholder="Enter name" />
+      <input [(ngModel)]="phoneNumber" name="phoneNumber" required type="number" placeholder="Phone Number" />
+      
+      <div class="container">
+        <label for="file" class="footer">
+          <p *ngIf="!profileImage">No file selected</p>
+          <p *ngIf="profileImage">{{ profileImage.name }}</p>
+        </label>
+        <input id="file" type="file" (change)="onFileChange($event)" />
+      </div>
+      
+      <button type="submit" class="card__button">Submit</button>
+    </form>
+  </div>
+
+  <!-- List of Volunteers -->
+  <div *ngIf="volunteers.length > 0" class="volunteers-list">
+    <h3>List of Volunteers</h3>
+    <table class="volunteer-table">
+      <thead>
+        <tr>
+          <th>Sr. No</th>
+          <th>Profile Photo</th>
+          <th>Name</th>
+          <th>Phone Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let volunteer of volunteers; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><img [src]="'http://localhost:3000/uploads/' + volunteer.profileImage" alt="Volunteer Image" class="volunteer-photo"></td>
+          <td>{{ volunteer.name }}</td>
+          <td>{{ volunteer.phone_number }}</td> <!-- Use phone_number here -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

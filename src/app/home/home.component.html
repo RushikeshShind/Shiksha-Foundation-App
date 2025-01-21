@@ -1,0 +1,14 @@
+<div class="home-container">
+    <div class="hero-section">
+      <h1>Welcome to SHIKSHA</h1>
+      <p>Your one-stop solution for education management.</p>
+    </div>
+    <div class="features">
+      <div class="feature-card" *ngFor="let feature of features">
+        <i class="{{ feature.icon }}"></i>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+  

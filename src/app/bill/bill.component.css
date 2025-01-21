@@ -1,0 +1,89 @@
+.container {
+  width: 100%;
+  max-width: 600px;
+  padding: 5%;
+  margin: 5% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: white;
+  border: 2px solid #6e00c1;
+  box-sizing: border-box;
+  box-shadow: 6px 6px 0px #d100f5;
+  border-radius: 16px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+h2 {
+  font-size: 1.5rem;
+  color: #6e00c1;
+}
+
+form {
+  width: 100%;
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #6e00c1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d100f5;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #6e00c1;
+  color: white;
+}
+
+td {
+  background-color: #f9f9f9;
+}
+
+button {
+  background-color: #007bff;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

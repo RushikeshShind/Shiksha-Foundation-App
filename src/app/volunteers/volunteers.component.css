@@ -1,0 +1,240 @@
+/* Button Styles */
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    gap: 4px;
+    height: 36px;
+    width: auto;
+    min-width: 100px;
+    border: none;
+    background: #1b1b1cd0;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #de8a2a;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    background: #333333;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.button:hover .svg-icon {
+    animation: rotate 1.3s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Card Styles */
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background: #ffffff;
+    border: 6px solid #000;
+    box-shadow: 12px 12px 0 #000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(50px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    border-radius: 10px;
+}
+
+.card.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.card__title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #000;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card__title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card__title::after {
+    transform: translateX(0);
+}
+
+.card__content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.card__form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card__form input {
+    padding: 10px;
+    border: 3px solid #000;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+.card__form input:focus {
+    outline: none;
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+/* File Upload Container */
+.container {
+    max-width: 500px;
+    padding: 15px;
+    background-color: rgba(240, 248, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border: 2px dashed royalblue;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.header p {
+    color: #000;
+    font-size: 14px;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 110, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.footer svg {
+    height: 24px;
+    fill: royalblue;
+    cursor: pointer;
+}
+
+#file {
+    display: none;
+}
+/*Volenteers Fitech*/
+.volunteers-list {
+    margin-top: 30px;
+    padding: 10px;
+  }
+  
+  .volunteer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .volunteer-table th, .volunteer-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .volunteer-table th {
+    background-color: #f2f2f2;
+    color: black;
+  }
+  
+  .volunteer-photo {
+    width: 100px; 
+    height: 100px; 
+    border-radius: 0; 
+    object-fit: cover; 
+    margin-bottom: 10px;
+  }
+/* Media Queries */
+@media (max-width: 768px) {
+    .card {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .container {
+        width: 90%;
+    }
+
+    .card__title {
+        font-size: 24px;
+    }
+
+    .card__content {
+        font-size: 14px;
+    }
+
+    .volunteer-container {
+        width: 120px;
+    }
+
+    .volunteer-photo {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 100%;
+    }
+
+    .card__title {
+        font-size: 20px;
+    }
+
+    .volunteer-container {
+        width: 100px;
+    }
+
+    .volunteer-photo {
+        width: 70px;
+        height: 70px;
+    }
+}

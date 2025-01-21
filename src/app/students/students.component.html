@@ -1,0 +1,51 @@
+<div class="container">
+  <!-- Add Student Button -->
+  <button class="add-student-btn" (click)="toggleForm()">Add Student</button>
+
+  <!-- Conditionally show the form when showForm is true -->
+  <div *ngIf="showForm" class="student-form">
+    <h2>Add Student</h2>
+    <form (ngSubmit)="onSubmit()" #studentForm="ngForm">
+      <!-- Name Input -->
+      <label for="name">Name</label>
+      <input type="text" id="name" [(ngModel)]="student.name" name="name" required #name="ngModel">
+      <div *ngIf="name.invalid && name.touched" class="error-message">Name is required.</div>
+    
+      <!-- Description Input -->
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="student.description" name="description" required #description="ngModel"></textarea>
+      <div *ngIf="description.invalid && description.touched" class="error-message">Description is required.</div>
+    
+      <!-- Profile Photo Upload -->
+      <label for="photo">Profile Photo</label>
+      <input type="file" id="photo" (change)="onImageChange($event)" accept="image/*">
+      <div *ngIf="imagePreview" class="image-preview">
+        <img [src]="imagePreview" alt="Profile Photo Preview" class="preview-image">
+      </div>
+    
+      <!-- Marksheets Upload -->
+      <label for="marksheet">Marksheets</label>
+      <input type="file" id="marksheet" (change)="onMarksChange($event)" accept=".pdf,.doc,.docx">
+    
+      <!-- Additional Certificates Upload -->
+      <label for="certificate">Additional Certificates</label>
+      <input type="file" id="certificate" (change)="onCertificateChange($event)" accept=".pdf,.doc,.docx">
+    
+      <!-- Submit and Reset Buttons -->
+      <button type="submit" [disabled]="studentForm.invalid">Submit</button>
+      <button type="button" (click)="resetForm()">Reset</button>
+    </form>
+  </div>
+
+  <!-- List of Students -->
+  <div *ngIf="students.length > 0" class="students-list">
+    <h2>Students List</h2>
+    <div class="student-card" *ngFor="let student of students">
+      <img *ngIf="student.profileImage" [src]="student.profileImage" alt="Student Photo" class="student-image">
+      <h3>{{ student.name }}</h3>
+      <p>{{ student.description }}</p>
+      <a [href]="student.marksheetUrl" target="_blank">View Marksheet</a>
+      <a *ngIf="student.certificateUrl" [href]="student.certificateUrl" target="_blank">View Certificate</a>
+    </div>
+  </div>
+</div>
