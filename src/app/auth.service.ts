@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { VolunteersService, Volunteer } from './volunteers/volunteers.service'; // Import VolunteersService and Volunteer
+import { VolunteersService, Volunteer } from './volunteers/volunteers.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -10,31 +10,37 @@ export class AuthService {
   private loggedIn = false;
   private role: string | null = null;
   private currentUser: Volunteer | null = null;
+
+  // Admin credentials
   private users: Record<string, { password: string, role: string }> = {
-    'admin': { password: 'admin', role: 'admin' }
+    'admin': { password: '123', role: 'admin' }, // Admin credentials
   };
 
   constructor(private volunteersService: VolunteersService) {}
 
-  // Login method
+  // Login logic for admin and volunteer
   login(username: string, password: string): Observable<boolean> {
     console.log('Attempting login with:', username, password);
+  
+    // Check if the username exists in the predefined users list (admin)
     if (this.users[username] && this.users[username].password === password) {
       this.loggedIn = true;
       this.role = this.users[username].role;
-      this.currentUser = null; // Admin user is not a volunteer
-      console.log('Login successful for admin:', username);
+      localStorage.setItem('userRole', this.role); // Save role in localStorage
+      console.log('Admin login successful, role assigned:', this.role);
       return of(true);
     }
-
+  
+    // If not admin, check if it's a volunteer
     return this.volunteersService.getVolunteerByName(username).pipe(
       map((volunteer: Volunteer) => {
-        console.log('Fetched volunteer:', volunteer);
         if (volunteer && volunteer.phone_number === password) {
           this.loggedIn = true;
           this.role = 'subadmin';
           this.currentUser = volunteer;
-          console.log('Login successful for volunteer:', username);
+          localStorage.setItem('userRole', this.role); // Save role
+          localStorage.setItem('currentUser', JSON.stringify(volunteer)); // Save user details
+          console.log('Volunteer login successful, role assigned:', this.role);
           return true;
         } else {
           console.log('Login failed:', username);
@@ -47,43 +53,28 @@ export class AuthService {
       })
     );
   }
-
-  // Method to create volunteer credentials
-  createVolunteerCredentials(username: string, password: string): void {
-    this.users[username] = { password: password, role: 'subadmin' };
-    console.log('Volunteer credentials created:', username, password);
-  }
-
-  // Method to update or reset admin credentials
-  setAdminCredentials(username: string, password: string): void {
-    if (!username || !password) {
-      console.error('Admin username or password cannot be empty.');
-      return;
+  
+  getRole(): string | null {
+    if (!this.role) {
+      this.role = localStorage.getItem('userRole'); // Retrieve role from localStorage
     }
-    this.users['admin'] = { password, role: 'admin' };
-    console.log('Admin credentials updated:', username, password);
+    return this.role;
   }
-
-  // Check if the user is logged in
+  
   isLoggedIn(): boolean {
     return this.loggedIn;
   }
-
-  // Get the role of the logged-in user
-  getRole(): string | null {
-    return this.role;
-  }
-
-  // Get the current logged-in volunteer
-  getCurrentUser(): Volunteer | null {
-    return this.currentUser;
-  }
-
-  // Logout the current user
+  
   logout(): void {
     this.loggedIn = false;
     this.role = null;
     this.currentUser = null;
-    console.log('User logged out.');
+    localStorage.removeItem('userRole'); // Clear role
+    localStorage.removeItem('currentUser'); // Clear user details
+  }
+  
+  // Optional: Placeholder method to create volunteer credentials (for logging)
+  createVolunteerCredentials(name: string, phoneNumber: string): void {
+    console.log(`Credentials created for Volunteer: Name - ${name}, Phone Number - ${phoneNumber}`);
   }
 }

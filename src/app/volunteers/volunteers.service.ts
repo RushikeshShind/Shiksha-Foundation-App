@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators'; // Import tap operator
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,16 +17,29 @@ export class VolunteersService {
 
   // Fetch all volunteers
   getVolunteers(): Observable<Volunteer[]> {
-    return this.http.get<Volunteer[]>(this.apiUrl);
+    return this.http.get<Volunteer[]>(this.apiUrl).pipe(
+      tap(
+        (volunteers) => console.log('Fetched volunteers:', volunteers),
+        (error) => console.error('Error fetching volunteers:', error)
+      )
+    );
   }
-
+  
   // Fetch a single volunteer by name
   getVolunteerByName(name: string): Observable<Volunteer> {
     console.log(`Fetching volunteer with name: ${name}`);
     return this.http.get<Volunteer>(`${this.apiUrl}/${name}`).pipe(
-      tap((volunteer: Volunteer) => console.log('Fetched volunteer:', volunteer))
+      map((volunteer: Volunteer) => {
+        console.log('Volunteer fetched:', volunteer);
+        return volunteer;
+      }),
+      catchError((error: any) => {
+        console.error('Error fetching volunteer by name:', error);
+        throw error;
+      })
     );
   }
+
 
   // Submit volunteer data (including profile image)
   submitVolunteerData(formData: FormData): Observable<Volunteer> {

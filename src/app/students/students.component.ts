@@ -20,6 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class StudentsComponent implements OnInit {
   showForm = false;
+  showPopup = false;
+  selectedStudent: Student | null = null;
   student: Student = {
     id: '',
     name: '',
@@ -55,7 +57,9 @@ export class StudentsComponent implements OnInit {
         console.log('Fetched students:', data); // Log the response
         this.students = data.map((student: Student) => ({
           ...student,
-          profileImage: `http://localhost:3000/uploads/${student.profileImage}` // Use the correct URL
+          profileImage: student.profileImage ? `http://localhost:3000/uploads/${student.profileImage}` : '',
+          marksheetUrl: student.marksheetUrl ? `http://localhost:3000/uploads/${student.marksheetUrl}` : '',
+          certificateUrl: student.certificateUrl ? `http://localhost:3000/uploads/${student.certificateUrl}` : ''
         }));
         console.log('Students with image URLs:', this.students); // Log the processed data
       },
@@ -165,5 +169,19 @@ export class StudentsComponent implements OnInit {
     this.marksheet = null;
     this.certificate = null;  // Reset certificate
     this.imageFile = null;
+  }
+
+  openPopup(student: Student) {
+    this.selectedStudent = student;
+    this.showPopup = true;
+  }
+  
+  closePopup() {
+    this.showPopup = false;
+    this.selectedStudent = null;
+  }
+  
+  viewPdf(url: string) {
+    window.open(url, '_blank');
   }
 }

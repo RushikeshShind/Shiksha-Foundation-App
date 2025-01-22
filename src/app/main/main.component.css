@@ -1,22 +1,25 @@
+/* General Styles */
 .body {
-  width: calc(100% - 5rem);
-  margin-left: 25px;
+  width: 100%; /* Use the full width of the viewport */
+  margin-left: 0; /* Remove any left margin */
   z-index: 0;
   position: relative;
   top: 0;
   transition: all 0.5s ease;
-  background: #f4f7fa;
-  padding: 3rem;
+  background: url('/assets/main.png') no-repeat center center fixed; /* Add background image */
+  background-size: cover; /* Ensure the image covers the entire background */
+  padding: 1rem; /* Consistent padding for all screens */
 }
 
+
 .body-trimmed {
-  width: calc(100% - 16.5625rem);
-  margin-left: 40px;
+  width: 100%; /* Full width for trimmed body */
+  margin-left: 0; /* Remove left margin */
 }
 
 .body-md-screen {
-  width: calc(100% - 5rem);
-  margin-left: 40px;
+  width: 100%; /* Full width for medium ascreens */
+  margin-left: 0; /* Remove left margin */
 }
 
 /* Mobile Header */
@@ -24,32 +27,95 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  background-color: #012a5b;
+  width: 100%; /* Full width */
+  background-color: #012a5b; /* Header background color */
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
-  z-index: 10;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem; /* Proper padding for touch areas */
+  z-index: 10; /* Keep header above other content */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .mobile-header .back-btn,
 .mobile-header .profile-btn {
-  background: none;
+  background: none; /* Transparent buttons */
   border: none;
   color: white;
-  font-size: 1.25rem;
-  cursor: pointer;
+  font-size: 1.25rem; /* Icon/button size */
+  cursor: pointer; /* Indicate clickable */
 }
 
 .mobile-header .page-title {
-  font-size: 1.25rem;
+  font-size: 1.25rem; /* Title font size */
   font-weight: bold;
 }
 
 /* Content Padding for Mobile */
 .main-content.mobile-padding {
-  padding-top: 4rem; /* Add padding to avoid overlap with mobile header */
+  padding-top: 4rem; /* Avoid overlap with fixed mobile header */
+}
+
+/* Popular Section */
+.popular {
+  margin-top: 20px;
+}
+
+.popular-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.popular-header h3 {
+  font-size: 1.2em;
+}
+
+.popular-header a {
+  text-decoration: none;
+  color: #0fb5d1;
+  font-size: 0.9em;
+}
+
+/* Card Section */
+.card {
+  display: flex;
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Card shadow */
+  overflow: hidden;
+}
+
+.card img {
+  width: 40%; /* Image occupies 40% of card width */
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.card h4 {
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+.card p {
+  font-size: 0.8em;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.card-stats {
+  font-size: 0.9em;
+  color: #0fb5d1;
+  display: flex;
+  justify-content: space-between;
 }

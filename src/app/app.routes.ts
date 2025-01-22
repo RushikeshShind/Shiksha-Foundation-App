@@ -20,7 +20,13 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent,canActivate: [AuthGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   { path: 'pages', component: PagesComponent , canActivate: [AuthGuard] },
-  { path: 'bill', component: BillComponent, canActivate: [AuthGuard] },
-  { path: 'students', component: StudentsComponent, canActivate: [AuthGuard] },
-  { path: 'volunteers', component: VolunteersComponent, canActivate: [AuthGuard] }
+  { path: 'bill', component: BillComponent, 
+    canActivate: [AuthGuard] 
+  },
+  { path: 'students', component: StudentsComponent, 
+    canActivate: [AuthGuard] 
+  },
+  { path: 'volunteers', component: VolunteersComponent, 
+    canActivate: [AuthGuard]
+   }
 ];

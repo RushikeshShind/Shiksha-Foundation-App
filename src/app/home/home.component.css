@@ -1,46 +1,164 @@
-.home-container {
-    padding: 1.2rem;
-    padding-left: 0rem;
-  }
-  
-  .hero-section {
+/* General Styles */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Banner Section */
+.banner {
+    background: linear-gradient(125deg, #6e00c1, #d100f5);
     text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .hero-section h1 {
-    font-size: 2.5rem;
-    color: #012a5b;
-  }
-  
-  .hero-section p {
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  .features {
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    padding-left: 0%;
+    margin: 10px auto; /* Center the banner horizontally */
+    width: calc(120% - 50px); /* Adjusts to the viewport width, accounting for margins */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+.banner h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.start-btn {
+    background-color: #fff;
+    color: #6e00c1;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+/* Categories Section */
+.categories {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-  }
-  
-  .feature-card {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    width: 15rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .feature-card h3 {
-    color: #012a5b;
-  }
-  
-  .feature-card p {
-    font-size: 0.875rem;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.categories button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+h3{
+    color: #ffffff;
+}
+/* Popular Section */
+.popular {
+    margin-top: 20px;
+}
+
+.popular-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.popular-header h3 {
+    font-size: 1.2em;
+}
+
+.popular-header a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 0.9em;
+}
+
+.card {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card img {
+    width: 40%;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.card h4 {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.card p {
+    font-size: 0.8em;
     color: #555;
+    margin-bottom: 10px;
+}
+
+.card-stats {
+    font-size: 0.9em;
+    color: #6e00c1;
+    display: flex;
+    justify-content: space-between;
+}
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
   }
   
+  .modal-content {
+    background-color: #fefefe;
+    margin: 0; /* Remove default margin */
+    padding: 20px;
+    border: none; /* Remove border */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    box-sizing: border-box; /* Include padding in width and height */
+    overflow: auto; /* Enable scroll if content overflows */
+    position: relative; /* Ensure close button is positioned relative to modal content */
+  }
+  
+  .close {
+    color: #6e00c1; /* White color for visibility */
+    position: absolute; /* Position relative to modal content */
+    top: 80px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000; /* Change color on hover/focus */
+    text-decoration: none;
+  }
+  
+  /* Image Styles */
+  .modal-img {
+    width: 100%; /* Adjust as needed */
+    max-width: 300px; /* Adjust as needed */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    margin: 0 auto 20px; /* Center the image and add bottom margin */
+  }

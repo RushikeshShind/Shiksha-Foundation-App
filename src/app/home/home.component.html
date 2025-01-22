@@ -1,14 +1,76 @@
-<div class="home-container">
-    <div class="hero-section">
-      <h1>Welcome to SHIKSHA</h1>
-      <p>Your one-stop solution for education management.</p>
+<div class="container">
+  <!-- Banner Section -->
+  <section class="banner">
+    <h1>Start Your Own Funding</h1>
+    <h6>ek Kadam Shiksha ki Aur</h6>
+    <br>
+    <button class="start-btn">Donate Now</button>
+  </section>
+
+  <!-- Popular Section -->
+  <section class="popular">
+    <div class="popular-header">
+      <h3>Our Projects</h3>
     </div>
-    <div class="features">
-      <div class="feature-card" *ngFor="let feature of features">
-        <i class="{{ feature.icon }}"></i>
-        <h3>{{ feature.title }}</h3>
-        <p>{{ feature.description }}</p>
+    <div class="card" id="card1">
+      <img src="assets/SHIKSHALOGO1.png" alt="Education Fund">
+      <div class="card-content">
+        <h4>MERA HAQ SAMARTHAN</h4>
+        <div class="card-stats">
+          <span>SHIKSHA FOUNDATION</span>
+        </div>
       </div>
     </div>
+    <div class="card" id="card2">
+      <img src="assets/SHIKSHALOGO1.png" alt="Education Fund">
+      <div class="card-content">
+        <h4>ANOTHER PROJECT</h4>
+        <div class="card-stats">
+          <span>SHIKSHA FOUNDATION</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="card3">
+      <img src="assets/SHIKSHALOGO1.png" alt="Education Fund">
+      <div class="card-content">
+        <h4>YET ANOTHER PROJECT</h4>
+        <div class="card-stats">
+          <span>SHIKSHA FOUNDATION</span>
+        </div>
+      </div>
+    </div>
+    <!-- Add additional cards if needed -->
+  </section>
+</div>
+
+<!-- Modals -->
+<div id="modal1" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <img src="assets/SHIKSHALOGO1.png" alt="Project Image" class="modal-img">
+    <p>Information about MERA HAQ SAMARTHAN...</p>
+    <br>
+    <p>RESOURCES</p>
+    <a href="path/to/your/pdf1.pdf" target="_blank">View PDF</a>
   </div>
-  
+</div>
+
+<div id="modal2" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Information about ANOTHER PROJECT...</p>
+    <br>
+    <p>RESOURCES</p>
+    <a href="path/to/your/pdf2.pdf" target="_blank">View PDF</a>
+  </div>
+</div>
+
+<div id="modal3" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Information about YET ANOTHER PROJECT...</p>
+    <br>
+    <p>RESOURCES</p>
+    <a href="path/to/your/pdf3.pdf" target="_blank">View PDF</a>
+  </div>
+</div>

@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {}
 
   navigateBack(): void {
-    this.router.navigate(['/dashboard']); // Default navigation for the back button
+    this.router.navigate(['/home']); // Default navigation for the back button
   }
 
   openProfile(): void {

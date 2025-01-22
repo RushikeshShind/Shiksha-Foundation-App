@@ -29,12 +29,12 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe(
       (success: boolean) => {
         if (success) {
-          console.log('Login successful, navigating to home...');
-          this.showSparks = true; // Show the sparks effect
+          console.log('Login successful. User role:', this.authService.getRole());
+          this.showSparks = true;
           setTimeout(() => {
-            this.showSparks = false; // Hide the sparks effect after 2 seconds
-            this.router.navigate(['/home']); // Navigate to the home page after successful login
-          }, 2000); // 2-second delay
+            this.showSparks = false;
+            this.router.navigate(['/home']); // Navigate to home
+          }, 2000);
         } else {
           alert('Invalid credentials');
         }
@@ -45,7 +45,7 @@ export class LoginComponent {
       }
     );
   }
-
+  
   closeNotification(): void {
     this.showSuccessMessage = false;
   }

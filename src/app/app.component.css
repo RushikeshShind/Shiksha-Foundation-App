@@ -24,11 +24,15 @@
   
   /* Scrollable Content */
   .content-container {
+    background-image: url('/assets/Splash Screen.png'); /* Adjust the image path */
+        background-size: cover; /* Ensure the background image covers the entire container */
+        background-position: center; /* Center the background image */
     margin-top: 20px; /* Add margin to account for the header */
-    margin-left: 10px; /* Adjust for the sidebar width */
-    padding: 1rem;
+    margin-left: 1px; /* Adjust for the sidebar width */
+    /* padding: 1rem; */
+    margin-right: 1px;
     overflow-y: auto; /* Enable vertical scrolling for content */
-    width: calc(100% - 10px); /* Full width minus sidebar */
+    width: calc(120% - 10px); /* Full width minus sidebar */
     height: calc(100vh - 20px); /* Full height minus header */
   }
   

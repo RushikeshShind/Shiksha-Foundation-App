@@ -36,16 +36,27 @@
       <button type="button" (click)="resetForm()">Reset</button>
     </form>
   </div>
-
-  <!-- List of Students -->
-  <div *ngIf="students.length > 0" class="students-list">
+   <!-- List of Students -->
+   <div *ngIf="students.length > 0" class="students-list">
     <h2>Students List</h2>
-    <div class="student-card" *ngFor="let student of students">
+    <div class="student-card" *ngFor="let student of students" (click)="openPopup(student)">
       <img *ngIf="student.profileImage" [src]="student.profileImage" alt="Student Photo" class="student-image">
       <h3>{{ student.name }}</h3>
       <p>{{ student.description }}</p>
       <a [href]="student.marksheetUrl" target="_blank">View Marksheet</a>
       <a *ngIf="student.certificateUrl" [href]="student.certificateUrl" target="_blank">View Certificate</a>
+    </div>
+  </div>
+
+  <!-- Student Popup -->
+  <div *ngIf="showPopup" class="student-popup">
+    <div class="popup-content">
+      <span class="close-btn" (click)="closePopup()">&times;</span>
+      <img *ngIf="selectedStudent?.profileImage" [src]="selectedStudent?.profileImage" alt="Student Photo" class="student-image">
+      <h3>{{ selectedStudent?.name }}</h3>
+      <p>{{ selectedStudent?.description }}</p>
+      <button *ngIf="selectedStudent?.marksheetUrl" (click)="viewPdf(selectedStudent?.marksheetUrl!)">View Marksheet</button>
+      <button *ngIf="selectedStudent?.certificateUrl" (click)="viewPdf(selectedStudent?.certificateUrl!)">View Certificate</button>
     </div>
   </div>
 </div>

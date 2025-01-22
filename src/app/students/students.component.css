@@ -7,9 +7,9 @@
 .add-student-btn {
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 10px;
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
   color: white;
   border: none;
   border-radius: 5px;
@@ -17,7 +17,7 @@
 }
 
 .add-student-btn:hover {
-  background-color: #45a049;
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
 }
 
 .student-form {
@@ -71,13 +71,16 @@
 
 .student-card {
   display: flex;
-  align-items: center;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: flex-start; /* Align items to the start */
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+  overflow: hidden; /* Ensure content stays within the card */
 }
 
 .student-card:hover {
@@ -89,36 +92,69 @@
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
+.student-card h3 {
+  color: #ffffff;
+  margin: 0;
+  flex-shrink: 0; /* Prevents the title from shrinking */
+}
+
+.student-card p {
+  color: #ffffff;
+  margin: 0;
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  display: -webkit-box; /* Display as a box for multiline ellipsis */
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical; /* Vertical orientation for the box */
+  white-space: normal; /* Allow text to wrap */
+  line-clamp: 3; /* Standard property for compatibility */
+  box-orient: vertical; /* Standard property for compatibility */
+}
+
+.student-card a {
+  color: #ffffff;
+  margin-top: 10px;
+  flex-shrink: 0; /* Prevents the links from shrinking */
+}
 .student-popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.9); /* Adjusted for better visibility */
   display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it is above other content */
+}
+
+.popup-content {
+  background-color: #6e00c1;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  max-width: none; /* Remove max-width to make it full screen */
+  position: relative;
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  text-align: center; /* Center all text content */
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.popup-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 600px;
-  position: relative;
-}
-
 .close-btn {
   position: absolute;
-  top: 10px;
+  top: 50px;
   right: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #ffffff; /* Ensure the close button is visible */
 }
 
 .student-image {
@@ -129,6 +165,33 @@
   margin-bottom: 10px;
 }
 
+h3 {
+  color: #ffffff;
+  margin: 10px 0;
+}
+
+p {
+  color: #ffffff;
+  margin: 10px 0;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+h2 {
+  color: #ffffff;
+}
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
   .student-card {
@@ -141,6 +204,6 @@
   }
 
   .popup-content {
-    width: 90%;
+    width: 100%;
   }
 }
