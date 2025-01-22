@@ -1,25 +1,21 @@
 /* General Styles */
 .body {
-  width: 100%; /* Use the full width of the viewport */
-  margin-left: 0; /* Remove any left margin */
+  width: 100%;
+  margin-left: 0;
   z-index: 0;
   position: relative;
   top: 0;
   transition: all 0.5s ease;
-  background: url('/assets/main.png') no-repeat center center fixed; /* Add background image */
-  background-size: cover; /* Ensure the image covers the entire background */
-  padding: 1rem; /* Consistent padding for all screens */
+  background: url('/assets/main.png') no-repeat center center fixed;
+  background-size: cover;
+  padding: 1rem;
+  padding-bottom: 4rem; /* Add space for the bottom navigation */
 }
 
-
-.body-trimmed {
-  width: 100%; /* Full width for trimmed body */
-  margin-left: 0; /* Remove left margin */
-}
-
+.body-trimmed,
 .body-md-screen {
-  width: 100%; /* Full width for medium ascreens */
-  margin-left: 0; /* Remove left margin */
+  width: 100%;
+  margin-left: 0;
 }
 
 /* Mobile Header */
@@ -27,34 +23,64 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%; /* Full width */
-  background-color: #012a5b; /* Header background color */
+  width: 100%;
+  background-color: #012a5b;
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem; /* Proper padding for touch areas */
-  z-index: 10; /* Keep header above other content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  padding: 0.75rem 1rem;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-header .back-btn,
 .mobile-header .profile-btn {
-  background: none; /* Transparent buttons */
+  background: none;
   border: none;
   color: white;
-  font-size: 1.25rem; /* Icon/button size */
-  cursor: pointer; /* Indicate clickable */
+  font-size: 1.25rem;
+  cursor: pointer;
 }
 
 .mobile-header .page-title {
-  font-size: 1.25rem; /* Title font size */
+  font-size: 1.25rem;
   font-weight: bold;
 }
 
 /* Content Padding for Mobile */
 .main-content.mobile-padding {
   padding-top: 4rem; /* Avoid overlap with fixed mobile header */
+  padding-bottom: 4rem; /* Ensure space for bottom navigation */
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4rem; /* Adjust height as needed */
+  background: #012a5b;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 20;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-nav a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bottom-nav a span {
+  font-size: 0.75rem; /* Label size */
 }
 
 /* Popular Section */
@@ -85,12 +111,12 @@
   background: #fff;
   border-radius: 10px;
   margin-bottom: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Card shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .card img {
-  width: 40%; /* Image occupies 40% of card width */
+  width: 40%;
   object-fit: cover;
 }
 
@@ -118,4 +144,19 @@
   color: #0fb5d1;
   display: flex;
   justify-content: space-between;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+  .main-content {
+    padding-bottom: 5rem; /* Space for bottom navigation */
+  }
+
+  .card {
+    flex-direction: column; /* Stack card content for smaller screens */
+  }
+
+  .card img {
+    width: 100%; /* Image takes full width on small screens */
+  }
 }

@@ -16,8 +16,8 @@ export class LeftSidebarComponent {
   isMobile: boolean = false;
 
   items = [
-    { routeLink: 'dashboard', icon: 'fal fa-home', label: 'Dashboard' },
-    { routeLink: 'home', icon: 'fal fa-box-open', label: 'Home' },
+    // { routeLink: 'dashboard', icon: 'fal fa-home', label: 'Dashboard' },
+    { routeLink: 'home', icon: 'fal fa-home', label: 'Home' },
     { routeLink: 'students', icon: 'fal fa-user-graduate', label: 'Students' },
     { routeLink: 'volunteers', icon: 'fal fa-hands-helping', label: 'Volunteers' },
     { routeLink: 'bill', icon: 'fal fa-file-invoice-dollar', label: 'Bill' },

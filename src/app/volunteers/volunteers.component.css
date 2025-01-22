@@ -167,7 +167,8 @@ h3{
 /*Volenteers Fitech*/
 .volunteers-list {
     margin-top: 30px;
-    padding: 20px;
+    padding: 10px;
+    padding-right: 40px;
   }
   
   .volunteer-table {
