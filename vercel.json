@@ -1,6 +1,9 @@
-
 {
     "build": {
-      "output": "dist" 
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "command": "npm run build -- --configuration production",
+      "outputDirectory": "dist" 
     }
   }
