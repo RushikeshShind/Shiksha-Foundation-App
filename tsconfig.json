@@ -23,7 +23,7 @@
       "ES2022",
       "dom"
     ],
-    "types": ["jasmine", "swiper"]
+    "types": ["jasmine"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
