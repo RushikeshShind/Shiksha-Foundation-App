@@ -14,7 +14,7 @@
     padding: 20px;
     padding-left: 0%;
     margin: 10px auto; /* Center the banner horizontally */
-    width: calc(120% - 50px); /* Adjusts to the viewport width, accounting for margins */
+    width: calc(120% - 80px); /* Adjusts to the viewport width, accounting for margins */
     box-sizing: border-box; /* Includes padding and border in width calculation */
 }
 

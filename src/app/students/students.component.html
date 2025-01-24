@@ -4,7 +4,7 @@
 
   <!-- Conditionally show the form when showForm is true -->
   <div *ngIf="showForm" class="student-form">
-    <h2>Add Student</h2>
+    <h2>{{ student.id ? 'Edit Student' : 'Add Student' }}</h2>
     <form (ngSubmit)="onSubmit()" #studentForm="ngForm">
       <!-- Name Input -->
       <label for="name">Name</label>
@@ -32,21 +32,25 @@
       <input type="file" id="certificate" (change)="onCertificateChange($event)" accept=".pdf,.doc,.docx">
     
       <!-- Submit and Reset Buttons -->
-      <button type="submit" [disabled]="studentForm.invalid">Submit</button>
+      <button type="submit" [disabled]="studentForm.invalid">{{ student.id ? 'Update' : 'Submit' }}</button>
       <button type="button" (click)="resetForm()">Reset</button>
     </form>
   </div>
-   <!-- List of Students -->
-   <div *ngIf="students.length > 0" class="students-list">
-    <h2>Students List</h2>
+
+  <h2>Students List</h2>
+  <!-- List of Students -->
+  <div class="students-list">
     <div class="student-card" *ngFor="let student of students" (click)="openPopup(student)">
       <img *ngIf="student.profileImage" [src]="student.profileImage" alt="Student Photo" class="student-image">
       <h3>{{ student.name }}</h3>
-      <p>{{ student.description }}</p>
-      <a [href]="student.marksheetUrl" target="_blank">View Marksheet</a>
-      <a *ngIf="student.certificateUrl" [href]="student.certificateUrl" target="_blank">View Certificate</a>
+      <!-- Edit and Delete Buttons -->
+      <!-- <div class="actions">
+        <button class="edit-btn" (click)="editStudent(student); $event.stopPropagation()">Edit</button>
+        <button class="delete-btn" (click)="deleteStudent(student.id); $event.stopPropagation()">Delete</button>
+      </div> -->
     </div>
   </div>
+
 
   <!-- Student Popup -->
   <div *ngIf="showPopup" class="student-popup">
@@ -58,5 +62,11 @@
       <button *ngIf="selectedStudent?.marksheetUrl" (click)="viewPdf(selectedStudent?.marksheetUrl!)">View Marksheet</button>
       <button *ngIf="selectedStudent?.certificateUrl" (click)="viewPdf(selectedStudent?.certificateUrl!)">View Certificate</button>
     </div>
+  </div>
+
+  <!-- Debugging: Check popup state -->
+  <div *ngIf="showPopup">
+    <p>Popup is open!</p>
+    <p>Selected Student: {{ selectedStudent | json }}</p>
   </div>
 </div>

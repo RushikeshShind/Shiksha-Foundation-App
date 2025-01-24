@@ -81,8 +81,10 @@ export class BillComponent implements OnInit {
   // Download bill PDF
   downloadPDF(billId: string | undefined): void {
     if (billId) {
+      console.log('Downloading PDF for bill ID:', billId);
       this.billService.downloadBillPDF(billId).subscribe({
         next: (response: Blob) => {
+          console.log('PDF downloaded successfully');
           const fileURL = URL.createObjectURL(response);
           const link = document.createElement('a');
           link.href = fileURL;

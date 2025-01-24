@@ -15,7 +15,9 @@ export const routes: Routes = [
   { path: '', redirectTo: 'splash', pathMatch: 'full' },
   { path: 'splash', component: SplashScreenComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomeComponent, 
+    // canActivate: [AuthGuard] 
+  },
   { path: 'products', component: ProductsComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent,canActivate: [AuthGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },

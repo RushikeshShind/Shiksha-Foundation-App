@@ -26,4 +26,8 @@ export class StudentsService {
   getStudentImageUrl(studentId: string): string {
     return `${this.apiUrl}/${studentId}/image`;  // Adjust the URL pattern as needed
   }
+
+  deleteStudent(studentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${studentId}`);
+  }
 }
