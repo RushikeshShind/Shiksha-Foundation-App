@@ -8,10 +8,10 @@ import { map, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class VolunteersService {
-  private apiUrl = 'http://localhost:3000/api/volunteers'; // URL for GET requests to fetch volunteers
-  private postUrl = 'http://localhost:3000/api/volunteer'; // URL for POST requests to submit a new volunteer
-  private deleteUrl = 'http://localhost:3000/api/volunteer'; // URL for DELETE requests
-  private updateUrl = 'http://localhost:3000/api/volunteer'; // URL for PUT requests
+  private apiUrl = 'https://shiksha-backend.onrender.com/api/volunteers'; // Updated URL for GET requests
+  private postUrl = 'https://shiksha-backend.onrender.com/api/volunteer'; // Updated URL for POST requests
+  private deleteUrl = 'https://shiksha-backend.onrender.com/api/volunteer'; // Updated URL for DELETE requests
+  private updateUrl = 'https://shiksha-backend.onrender.com/api/volunteer'; // Updated URL for PUT requests
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class VolunteersService {
       )
     );
   }
-  
+
   // Fetch a single volunteer by name
   getVolunteerByName(name: string): Observable<Volunteer> {
     console.log(`Fetching volunteer with name: ${name}`);
@@ -39,7 +39,6 @@ export class VolunteersService {
       })
     );
   }
-
 
   // Submit volunteer data (including profile image)
   submitVolunteerData(formData: FormData): Observable<Volunteer> {

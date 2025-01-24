@@ -38,7 +38,13 @@
       <tbody>
         <tr *ngFor="let volunteer of volunteers; let i = index">
           <td>{{ i + 1 }}</td>
-          <td><img [src]="'http://localhost:3000/uploads/' + volunteer.profileImage" alt="Volunteer Image" class="volunteer-photo"></td>
+          <td>
+            <img
+              [src]="'https://shiksha-backend.onrender.com/uploads/' + volunteer.profileImage"
+              alt="Volunteer Image"
+              class="volunteer-photo"
+            />
+          </td>
           <td>{{ volunteer.name }}</td>
           <td>{{ volunteer.phone_number }}</td> <!-- Use phone_number here -->
         </tr>

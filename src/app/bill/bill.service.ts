@@ -6,18 +6,22 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BillService {
-  private apiUrl = 'http://localhost:3000/api/bills';
+  // Update the API URL to point to the new backend
+  private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
   constructor(private http: HttpClient) {}
 
+  // Save a new bill
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill);
   }
 
+  // Fetch all bills
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
+  // Download a bill as a PDF
   downloadBillPDF(billId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/download/${billId}`, { responseType: 'blob' });
   }

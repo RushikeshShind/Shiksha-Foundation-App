@@ -57,9 +57,9 @@ export class StudentsComponent implements OnInit {
         console.log('Fetched students:', data);
         this.students = data.map((student: Student) => ({
           ...student,
-          profileImage: student.photo ? `http://localhost:3000/uploads/${student.photo}` : '',
-          marksheetUrl: student.marksheet ? `http://localhost:3000/uploads/${student.marksheet}` : '',
-          certificateUrl: student.certificate ? `http://localhost:3000/uploads/${student.certificate}` : ''
+          profileImage: student.photo ? `https://shiksha-backend.onrender.com/uploads/${student.photo}` : '',
+          marksheetUrl: student.marksheet ? `https://shiksha-backend.onrender.com/uploads/${student.marksheet}` : '',
+          certificateUrl: student.certificate ? `https://shiksha-backend.onrender.com/uploads/${student.certificate}` : ''
         }));
         console.log('Students with image URLs:', this.students);
       },
@@ -148,7 +148,6 @@ export class StudentsComponent implements OnInit {
     );
   }
 
- 
   resetForm() {
     this.student = {
       id: '',
@@ -184,27 +183,4 @@ export class StudentsComponent implements OnInit {
   viewPdf(url: string) {
     window.open(url, '_blank');
   }
-
-  // editStudent(student: Student) {
-  //   console.log('Editing student:', student); // Debugging
-  //   this.student = { ...student };
-  //   this.imagePreview = student.profileImage || null;
-  //   this.showForm = true;
-  // }
-  
-  // deleteStudent(studentId: string) {
-  //   if (confirm('Are you sure you want to delete this student?')) {
-  //     this.studentsService.deleteStudent(studentId).subscribe(
-  //       () => {
-  //         console.log('Student soft deleted successfully');
-  //         this.loadStudents(); // Refresh the student list
-  //       },
-  //       (error: HttpErrorResponse) => {
-  //         console.error('Error soft deleting student:', error);
-  //         alert('Failed to soft delete student. Please try again.');
-  //       }
-  //     );
-  //   }
-  // }
-
 }

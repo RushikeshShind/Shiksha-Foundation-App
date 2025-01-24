@@ -7,8 +7,8 @@ import { Student } from './student.model';  // Import the Student interface
   providedIn: 'root'
 })
 export class StudentsService {
-  private apiUrl = 'http://localhost:3000/api/students';  // URL to fetch students
-  private postUrl = 'http://localhost:3000/api/student';  // URL to submit new student data
+  private apiUrl = 'https://shiksha-backend.onrender.com/api/students';  // Updated URL to fetch students
+  private postUrl = 'https://shiksha-backend.onrender.com/api/student';  // Updated URL to submit new student data
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +27,7 @@ export class StudentsService {
     return `${this.apiUrl}/${studentId}/image`;  // Adjust the URL pattern as needed
   }
 
+  // Delete a student (DELETE request)
   deleteStudent(studentId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${studentId}`);
   }
