@@ -28,14 +28,22 @@ export class VolunteersService {
   // Fetch a single volunteer by name
   getVolunteerByName(name: string): Observable<Volunteer> {
     console.log(`Fetching volunteer with name: ${name}`);
-    return this.http.get<Volunteer>(`${this.apiUrl}/${name}`).pipe(
+    const url = `${this.apiUrl}/${name}`;
+    console.log('Request URL:', url); // Log the URL being requested
+  
+    return this.http.get<Volunteer>(url).pipe(
       map((volunteer: Volunteer) => {
         console.log('Volunteer fetched:', volunteer);
         return volunteer;
       }),
       catchError((error: any) => {
         console.error('Error fetching volunteer by name:', error);
-        throw error;
+        if (error.status === 404) {
+          console.log('Volunteer not found:', name);
+        } else {
+          console.error('Unexpected error:', error);
+        }
+        throw error; // Re-throw the error to be handled by the caller
       })
     );
   }

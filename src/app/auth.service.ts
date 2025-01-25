@@ -18,7 +18,6 @@ export class AuthService {
 
   constructor(private volunteersService: VolunteersService) {}
 
-  // Login logic for admin and volunteer
   login(username: string, password: string): Observable<boolean> {
     console.log('Attempting login with:', username, password);
   
@@ -26,7 +25,7 @@ export class AuthService {
     if (this.users[username] && this.users[username].password === password) {
       this.loggedIn = true;
       this.role = this.users[username].role;
-      localStorage.setItem('userRole', this.role); // Save role in localStorage
+      localStorage.setItem('userRole', this.role);
       console.log('Admin login successful, role assigned:', this.role);
       return of(true);
     }
@@ -38,17 +37,22 @@ export class AuthService {
           this.loggedIn = true;
           this.role = 'subadmin';
           this.currentUser = volunteer;
-          localStorage.setItem('userRole', this.role); // Save role
-          localStorage.setItem('currentUser', JSON.stringify(volunteer)); // Save user details
+          localStorage.setItem('userRole', this.role);
+          localStorage.setItem('currentUser', JSON.stringify(volunteer));
           console.log('Volunteer login successful, role assigned:', this.role);
           return true;
         } else {
-          console.log('Login failed:', username);
+          console.log('Login failed: Invalid credentials for volunteer', username);
           return false;
         }
       }),
       catchError((error) => {
         console.error('Error fetching volunteer data:', error);
+        if (error.status === 404) {
+          console.log('Volunteer not found:', username);
+        } else {
+          console.error('Unexpected error:', error);
+        }
         return of(false);
       })
     );
