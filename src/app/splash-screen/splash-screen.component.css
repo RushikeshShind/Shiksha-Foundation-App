@@ -1,7 +1,7 @@
 .splash-container {
   position: fixed; /* Ensures the container covers the entire screen */
   top: 0;
-  left: 0;
+  left: 0;  
   width: 100vw; /* Full width */
   height: 100vh; /* Full height */
   display: flex;
@@ -11,6 +11,7 @@
   margin: 0; /* Removes any unwanted margins */
   padding: 0; /* Removes any unwanted paddings */
   box-sizing: border-box; /* Ensures consistent sizing */
+  background-color: #9000ff;
 }
 
 .background-circle {
