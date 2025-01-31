@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">shiksha foundation</string>
-    <string name="title_activity_main">shiksha foundation</string>
-    <string name="package_name">com.shiksha.foundation</string>
-    <string name="custom_url_scheme">com.shiksha.foundation</string>
-</resources>

@@ -1,20 +1,13 @@
-/* Sidenav */
 .sidenav {
   background: linear-gradient(135deg, #6e00c1, #d100f5);
-  position: fixed;
+  transition: all 0.5s ease;
+  position: fixed; /* Fixed position */
   z-index: 1;
-  top: 2.5rem; /* Adjusted to account for the mobile header */
+  top: 0;
   left: 0;
-  width: 16.5625rem; /* Expanded width */
-  height: calc(100vh - 2.5rem); /* Adjusted height */
+  width: 16.5625rem;
+  height: 100vh;
   box-shadow: 0.063rem 0 1.25rem 0 #8690a3;
-}
-
-/* Content Wrapper */
-.content-wrapper {
-  margin-left: 16.5625rem; /* Match expanded sidenav width */
-  padding: 1rem;
-  transition: margin-left 0.5s ease; /* Smooth transition */
 }
 
 .sidenav-collapsed {
@@ -25,9 +18,8 @@
   display: flex;
   align-items: center;
   padding: 0.938rem 0.938rem 0 0.938rem;
-  width: 105%;
+  width: 100%;
 }
-
 .sidenav .logo-container .logo {
   background: #fff;
   text-align: center;
@@ -40,14 +32,12 @@
   cursor: pointer;
   border: none;
 }
-
 .sidenav .logo-container .logo-text {
   margin-left: 1.5rem;
   font-size: 24px;
   font-weight: 700;
   color: #fff;
 }
-
 .sidenav .logo-container .btn-close {
   margin-left: auto;
   cursor: pointer;
@@ -57,13 +47,11 @@
   background-color: transparent;
   border: none;
 }
-
 .sidenav .logo-container .btn-close .fa-times {
   color: #fff;
   font-size: 24px;
 }
 
-/* Sidenav Navigation */
 .sidenav-nav {
   list-style: none;
   padding: 0.938rem;
@@ -74,12 +62,10 @@
   height: calc(100% - 3.65rem);
   cursor: pointer;
 }
-
 .sidenav-nav .sidenav-nav-item {
   width: 100%;
   margin-bottom: 0.625rem;
 }
-
 .sidenav-nav .sidenav-nav-item .sidenav-nav-link {
   display: flex;
   align-items: center;
@@ -89,7 +75,6 @@
   border-radius: 0.625rem;
   transition: all 0.3s ease;
 }
-
 .sidenav-nav .sidenav-nav-item .sidenav-nav-link .sidenav-link-icon {
   font-size: 22px;
   width: 2rem;
@@ -97,12 +82,9 @@
   text-align: center;
   padding: 12px;
 }
-
 .sidenav-nav .sidenav-nav-item .sidenav-nav-link .sidenav-link-text {
   margin-left: 1.5rem;
 }
-
-/* Hover/Active Effect */
 .sidenav-nav .sidenav-nav-item:hover .sidenav-nav-link {
   background-color: #fff;
   color: #000;
@@ -111,12 +93,10 @@
 .active {
   background-color: #fff;
 }
-
 .active .sidenav-link-icon,
 .active .sidenav-link-text {
-  color: #4f4f4f;
+  color: #000;
 }
-
 /* Bottom Navigation for Mobile */
 .bottom-nav {
   position: fixed;
@@ -145,20 +125,18 @@
 }
 
 .bottom-nav-link:hover {
-  color: #ffffff00;
+  color: #fff;
 }
 
 .bottom-nav-icon {
   font-size: 1.5rem;
-  color: inherit;
 }
 
 .bottom-nav-text {
   font-size: 0.75rem;
   margin-top: 0.2rem;
 }
-
-/* Content Wrapper for mobile */
+/* Content Wrapper */
 .content-wrapper {
   margin-left: 15rem; /* Reduce the margin slightly */
   padding: 1rem; /* Maintain consistent padding */
@@ -185,15 +163,5 @@
     width: 100%;
     background: linear-gradient(135deg, #6e00c1, #d100f5);
     z-index: 2; /* Above scrolling content */
-  }
-
-  .bottom-nav-link.active {
-    background-color: #fff;
-    color: #000;
-  }
-
-  .bottom-nav-link.active .bottom-nav-icon,
-  .bottom-nav-link.active .bottom-nav-text {
-    color: #4f4f4f;
   }
 }

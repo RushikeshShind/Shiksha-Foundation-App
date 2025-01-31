@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -14,16 +14,14 @@ export class LeftSidebarComponent {
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
 
   isMobile: boolean = false;
-  activeRoute: string = '';
 
   items = [
+    // { routeLink: 'dashboard', icon: 'fal fa-home', label: 'Dashboard' },
     { routeLink: 'home', icon: 'fal fa-home', label: 'Home' },
     { routeLink: 'students', icon: 'fal fa-user-graduate', label: 'Students' },
     { routeLink: 'volunteers', icon: 'fal fa-hands-helping', label: 'Volunteers' },
     { routeLink: 'bill', icon: 'fal fa-file-invoice-dollar', label: 'Bill' },
   ];
-
-  constructor(private router: Router) {}
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
@@ -32,12 +30,6 @@ export class LeftSidebarComponent {
 
   ngOnInit(): void {
     this.checkMobile();
-    this.activeRoute = this.router.url; // Get initial active route
-
-    // Listen for route changes
-    this.router.events.subscribe(() => {
-      this.activeRoute = this.router.url;
-    });
   }
 
   checkMobile(): void {
@@ -49,17 +41,10 @@ export class LeftSidebarComponent {
   }
 
   closeSidenav(): void {
-    if (this.isMobile) {
-      this.changeIsLeftSidebarCollapsed.emit(true);  // Close sidebar on mobile after clicking a link
-    }
+    this.changeIsLeftSidebarCollapsed.emit(true);
   }
 
-  isActive(route: string): boolean {
-    return this.activeRoute.includes(route);
-  }
-
-  // TrackBy function to avoid object re-creation
-  trackByFn(index: number, item: { routeLink: string; icon: string; label: string }) {
-    return item.routeLink; // Use routeLink as the unique identifier
+  trackByFn(index: number, item: any): number {
+    return index; // or item.id if you have unique ids
   }
 }
