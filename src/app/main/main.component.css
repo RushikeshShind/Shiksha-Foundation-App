@@ -18,6 +18,26 @@
   margin-left: 0;
 }
 
+/* Desktop View Adjustments */
+@media (min-width: 769px) {
+  .body {
+    margin-left: 16.5625rem; /* Match the width of the sidenav */
+  }
+
+  .mobile-header {
+    display: none; /* Hide mobile header on desktop */
+  }
+
+  .bottom-nav {
+    display: none; /* Hide bottom navigation on desktop */
+  }
+
+  .main-content {
+    padding-top: 1rem; /* Reset padding for desktop */
+    padding-bottom: 1rem;
+  }
+}
+
 /* Mobile Header */
 .mobile-header {
   position: fixed;
