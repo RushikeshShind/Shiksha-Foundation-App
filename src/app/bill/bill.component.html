@@ -1,45 +1,74 @@
 <div class="container">
   <div class="heading">
-  <h2>Bill Payment Form</h2></div>
+    <h2>Bill Payment Form</h2>
+  </div>
   <form (ngSubmit)="submitBill()">
     <!-- Form Inputs -->
-    <label for="vendorName">Vendor Name</label>
-    <input type="text" id="vendorName" [(ngModel)]="bill.vendorName" name="vendorName" required>
+    <label for="date">Date</label>
+    <input type="date" id="date" [(ngModel)]="bill.date" name="date" required>
+
+    <label for="name">Name</label>
+    <input type="text" id="name" [(ngModel)]="bill.name" name="name" required>
+
+    <label for="msName">M/S Name</label>
+    <input type="text" id="msName" [(ngModel)]="bill.msName" name="msName" required>
+
+    <label for="amountNumber">Amount (in numbers)</label>
+    <input type="number" id="amountNumber" [(ngModel)]="bill.amountNumber" name="amountNumber" required (input)="convertAmountToWords()">
+
+    <label for="amountWords">Amount (in words)</label>
+    <input type="text" id="amountWords" [(ngModel)]="bill.amountWords" name="amountWords" readonly>
 
     <label for="address">Address</label>
     <input type="text" id="address" [(ngModel)]="bill.address" name="address" required>
 
-    <label for="adharcard">Aadhaar Card</label>
-    <input type="text" id="adharcard" [(ngModel)]="bill.adharcard" name="adharcard" required>
+    <label for="mobileNo">Mobile No.</label>
+    <input type="text" id="mobileNo" [(ngModel)]="bill.mobileNo" name="mobileNo" required>
 
-    <label for="phoneNumber">Phone Number</label>
-    <input type="text" id="phoneNumber" [(ngModel)]="bill.phoneNumber" name="phoneNumber" required>
+    <label for="alternativeNo">Alternative No.</label>
+    <input type="text" id="alternativeNo" [(ngModel)]="bill.alternativeNo" name="alternativeNo">
 
-    <label for="amount">Amount</label>
-    <input type="number" id="amount" [(ngModel)]="bill.amount" name="amount" required>
+    <label for="email">Email ID</label>
+    <input type="email" id="email" [(ngModel)]="bill.email" name="email" required>
+
+    <label for="pancardNo">Pancard No.</label>
+    <input type="text" id="pancardNo" [(ngModel)]="bill.pancardNo" name="pancardNo" required>
+
+    <label for="purpose">Purpose of Donation</label>
+    <input type="text" id="purpose" [(ngModel)]="bill.purpose" name="purpose" required>
+
+    <label for="transactionId">Transaction ID</label>
+    <input type="text" id="transactionId" [(ngModel)]="bill.transactionId" name="transactionId" required>
+
+    <label for="chequeDetails">Cheque Details</label>
+    <input type="text" id="chequeDetails" [(ngModel)]="bill.chequeDetails" name="chequeDetails">
+
+    <label for="remark">Remark</label>
+    <input type="text" id="remark" [(ngModel)]="bill.remark" name="remark">
+
+    <label for="volunteerName">Name of the Volunteer</label>
+    <input type="text" id="volunteerName" [(ngModel)]="bill.volunteerName" name="volunteerName" readonly>
 
     <button type="submit">Save Bill</button>
   </form>
 </div>
-  <h3>Existing Bills</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Vendor</th>
-        <th>Amount</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let bill of bills">
-        <td>{{ bill.vendorName }}</td>
-        <td>{{ bill.amount }}</td>
-        <td>
-          <button  (click)="downloadPDF(bill.id)">Download PDF</button>
-        
-          <button (click)="viewBill(bill.id)">View Bill</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
+<h3>Existing Bills</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Vendor</th>
+      <th>Amount</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let bill of bills">
+      <td>{{ bill.name }}</td>
+      <td>{{ bill.amountNumber }}</td>
+      <td>
+        <button (click)="downloadPDF(bill.id)">Download PDF</button>
+        <button (click)="viewBill(bill.id)">View Bill</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
