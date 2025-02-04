@@ -4,14 +4,23 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel 
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf, ngFor etc.
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule for making HTTP requests
 
-
 // Define an interface for the bill structure
 interface Bill {
-  vendorName: string;
+  date: string;
+  name: string;
+  msName: string;
+  amountNumber: number;
+  amountWords: string;
   address: string;
-  adharcard: string;
-  phoneNumber: string;
-  amount: number;
+  mobileNo: string;
+  alternativeNo?: string;
+  email: string;
+  pancardNo: string;
+  purpose: string;
+  transactionId: string;
+  chequeDetails?: string;
+  remark?: string;
+  volunteerName: string;
   id?: string; // Optional for new bills before saving
 }
 
@@ -30,11 +39,18 @@ interface Bill {
 export class BillComponent implements OnInit {
   // Initialize a new bill object
   bill: Bill = {
-    vendorName: '',
+    date: '',
+    name: '',
+    msName: '',
+    amountNumber: 0,
+    amountWords: '',
     address: '',
-    adharcard: '',
-    phoneNumber: '',
-    amount: 0
+    mobileNo: '',
+    email: '',
+    pancardNo: '',
+    purpose: '',
+    transactionId: '',
+    volunteerName: ''
   };
 
   // Array to store all bills
@@ -44,13 +60,14 @@ export class BillComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBills();
+    this.bill.volunteerName = this.getVolunteerName(); // Set the volunteer name based on login
   }
 
   // Submit a new bill
   submitBill(): void {
     if (this.isValidBill(this.bill)) {
       this.billService.saveBill(this.bill).subscribe({
-        next: () => { // Removed 'response' parameter
+        next: () => {
           alert('Bill saved successfully!');
           this.loadBills(); // Reload the bills list
           this.resetForm(); // Reset the form
@@ -104,22 +121,35 @@ export class BillComponent implements OnInit {
   // Reset the form
   private resetForm(): void {
     this.bill = {
-      vendorName: '',
+      date: '',
+      name: '',
+      msName: '',
+      amountNumber: 0,
+      amountWords: '',
       address: '',
-      adharcard: '',
-      phoneNumber: '',
-      amount: 0
+      mobileNo: '',
+      email: '',
+      pancardNo: '',
+      purpose: '',
+      transactionId: '',
+      volunteerName: this.getVolunteerName() // Reset volunteer name based on login
     };
   }
 
   // Validate bill inputs
   private isValidBill(bill: Bill): boolean {
     return (
-      bill.vendorName.trim() !== '' &&
+      bill.date.trim() !== '' &&
+      bill.name.trim() !== '' &&
+      bill.msName.trim() !== '' &&
+      bill.amountNumber > 0 &&
       bill.address.trim() !== '' &&
-      bill.adharcard.trim() !== '' &&
-      bill.phoneNumber.trim() !== '' &&
-      bill.amount > 0
+      bill.mobileNo.trim() !== '' &&
+      bill.email.trim() !== '' &&
+      bill.pancardNo.trim() !== '' &&
+      bill.purpose.trim() !== '' &&
+      bill.transactionId.trim() !== '' &&
+      bill.volunteerName.trim() !== ''
     );
   }
 
@@ -139,5 +169,23 @@ export class BillComponent implements OnInit {
     } else {
       alert('Bill ID is undefined.');
     }
+  }
+
+  // Convert amount in numbers to words
+  convertAmountToWords(): void {
+    this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
+  }
+
+  // Function to convert number to words (simple implementation)
+  private numberToWords(amount: number): string {
+    // Implement a function to convert numbers to words
+    // This is a placeholder implementation
+    return amount.toString(); // Replace with actual conversion logic
+  }
+
+  // Get volunteer name based on login (placeholder implementation)
+  private getVolunteerName(): string {
+    // Implement logic to get the logged-in volunteer's name
+    return 'Volunteer Name'; // Replace with actual logic
   }
 }
