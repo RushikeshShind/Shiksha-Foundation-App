@@ -3,6 +3,7 @@ import { BillService } from '../bill/bill.service'; // Import BillService
 import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel binding
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf, ngFor etc.
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule for making HTTP requests
+import { AuthService } from '../auth.service';
 
 // Define an interface for the bill structure
 interface Bill {
@@ -56,11 +57,11 @@ export class BillComponent implements OnInit {
   // Array to store all bills
   bills: Bill[] = [];
 
-  constructor(private billService: BillService) {}
+  constructor(private billService: BillService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadBills();
-    this.bill.volunteerName = this.getVolunteerName(); // Set the volunteer name based on login
+    this.bill.volunteerName = this.getVolunteerName(); // Auto-fill volunteer name
   }
 
   // Submit a new bill
@@ -185,7 +186,7 @@ export class BillComponent implements OnInit {
 
   // Get volunteer name based on login (placeholder implementation)
   private getVolunteerName(): string {
-    // Implement logic to get the logged-in volunteer's name
-    return 'Volunteer Name'; // Replace with actual logic
+    const user = this.authService.getLoggedInUser();
+    return user?.name || 'Unknown Volunteer'; // Fallback if user is not found
   }
 }
