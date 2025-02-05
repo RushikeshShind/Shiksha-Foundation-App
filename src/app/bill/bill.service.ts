@@ -41,7 +41,7 @@ export class BillService {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
-  // Download a bill as a PDF
+  // Download a bill as a PDF (fix for mobile)
   downloadBillPDF(billId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/download/${billId}`, { responseType: 'blob' });
   }

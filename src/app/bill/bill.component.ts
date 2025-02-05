@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf,
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule for making HTTP requests
 import { AuthService } from '../auth.service';
 
-// Define an interface for the bill structure
 interface Bill {
   date: string;
   name: string;
@@ -31,17 +30,14 @@ interface Bill {
   styleUrls: ['./bill.component.css'],
   standalone: true,
   imports: [
-    FormsModule,    // Import FormsModule for ngModel two-way binding
-    CommonModule,   // Import CommonModule for ngIf, ngFor etc.
-    HttpClientModule, // Import HttpClientModule for HTTP calls
+    FormsModule,
+    CommonModule,
+    HttpClientModule,
   ],
-  providers: [BillService] // Provide the BillService directly in this standalone component
+  providers: [BillService]
 })
 export class BillComponent implements OnInit {
-  // Initialize a new bill object
   bill: Bill = this.getEmptyBill();
-
-  // Array to store all bills
   bills: Bill[] = [];
 
   constructor(private billService: BillService, private authService: AuthService) {}
@@ -51,14 +47,13 @@ export class BillComponent implements OnInit {
     this.bill.volunteerName = this.getVolunteerName(); // Auto-fill volunteer name
   }
 
-  // Submit a new bill
   submitBill(): void {
     if (this.isValidBill(this.bill)) {
       this.billService.saveBill(this.bill).subscribe({
         next: () => {
           alert('Bill saved successfully!');
-          this.loadBills(); // Reload the bills list
-          this.bill = this.getEmptyBill(); // Reset the form
+          this.loadBills();
+          this.bill = this.getEmptyBill();
         },
         error: (err) => {
           console.error('Error saving bill:', err);
@@ -70,7 +65,6 @@ export class BillComponent implements OnInit {
     }
   }
 
-  // Load all bills
   loadBills(): void {
     this.billService.getBills().subscribe({
       next: (bills) => {
@@ -83,7 +77,7 @@ export class BillComponent implements OnInit {
     });
   }
 
-  // Download bill PDF
+  // Download PDF for bill and save to device
   downloadPDF(billId: string | undefined): void {
     if (billId) {
       console.log('Downloading PDF for bill ID:', billId);
@@ -107,7 +101,7 @@ export class BillComponent implements OnInit {
       this.billService.downloadBillPDF(billId).subscribe({
         next: (response: Blob) => {
           const fileURL = URL.createObjectURL(response);
-          window.open(fileURL, '_blank'); // Opens the PDF in a new tab
+          window.open(fileURL, '_blank');
         },
         error: (err) => {
           console.error('Error viewing PDF:', err);
@@ -119,23 +113,11 @@ export class BillComponent implements OnInit {
     }
   }
 
-  // Convert amount in numbers to words
-  convertAmountToWords(): void {
-    this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
-  }
-
-  // Function to convert number to words (simple implementation)
-  private numberToWords(amount: number): string {
-    return amount.toString(); // Replace with actual conversion logic
-  }
-
-  // Get volunteer name based on login (placeholder implementation)
   private getVolunteerName(): string {
     const user = this.authService.getLoggedInUser();
     return user?.name || 'Unknown Volunteer'; // Fallback if user is not found
   }
 
-  // Helper function to reset the bill object
   private getEmptyBill(): Bill {
     return {
       date: '',
@@ -149,25 +131,12 @@ export class BillComponent implements OnInit {
       pancardNo: '',
       purpose: '',
       transactionId: '',
-      volunteerName: this.getVolunteerName() // Keep volunteer name after reset
+      volunteerName: this.getVolunteerName(),
     };
   }
 
-  // Validate bill inputs
   private isValidBill(bill: Bill): boolean {
-    return (
-      bill.date.trim() !== '' &&
-      bill.name.trim() !== '' &&
-      bill.msName.trim() !== '' &&
-      bill.amountNumber > 0 &&
-      bill.address.trim() !== '' &&
-      bill.mobileNo.trim() !== '' &&
-      bill.email.trim() !== '' &&
-      bill.pancardNo.trim() !== '' &&
-      bill.purpose.trim() !== '' &&
-      bill.transactionId.trim() !== '' &&
-      bill.volunteerName.trim() !== ''
-    );
+    return bill.date.trim() !== '' && bill.name.trim() !== '' && bill.amountNumber > 0;
   }
 
   // Trigger file download
