@@ -39,20 +39,7 @@ interface Bill {
 })
 export class BillComponent implements OnInit {
   // Initialize a new bill object
-  bill: Bill = {
-    date: '',
-    name: '',
-    msName: '',
-    amountNumber: 0,
-    amountWords: '',
-    address: '',
-    mobileNo: '',
-    email: '',
-    pancardNo: '',
-    purpose: '',
-    transactionId: '',
-    volunteerName: ''
-  };
+  bill: Bill = this.getEmptyBill();
 
   // Array to store all bills
   bills: Bill[] = [];
@@ -71,7 +58,7 @@ export class BillComponent implements OnInit {
         next: () => {
           alert('Bill saved successfully!');
           this.loadBills(); // Reload the bills list
-          this.resetForm(); // Reset the form
+          this.bill = this.getEmptyBill(); // Reset the form
         },
         error: (err) => {
           console.error('Error saving bill:', err);
@@ -102,12 +89,7 @@ export class BillComponent implements OnInit {
       console.log('Downloading PDF for bill ID:', billId);
       this.billService.downloadBillPDF(billId).subscribe({
         next: (response: Blob) => {
-          console.log('PDF downloaded successfully');
-          const fileURL = URL.createObjectURL(response);
-          const link = document.createElement('a');
-          link.href = fileURL;
-          link.download = `Bill_${billId}.pdf`;
-          link.click();
+          this.triggerFileDownload(response, `Bill_${billId}.pdf`);
         },
         error: (err) => {
           console.error('Error downloading PDF:', err);
@@ -117,41 +99,6 @@ export class BillComponent implements OnInit {
     } else {
       alert('Bill ID is undefined.');
     }
-  }
-
-  // Reset the form
-  private resetForm(): void {
-    this.bill = {
-      date: '',
-      name: '',
-      msName: '',
-      amountNumber: 0,
-      amountWords: '',
-      address: '',
-      mobileNo: '',
-      email: '',
-      pancardNo: '',
-      purpose: '',
-      transactionId: '',
-      volunteerName: this.getVolunteerName() // Reset volunteer name based on login
-    };
-  }
-
-  // Validate bill inputs
-  private isValidBill(bill: Bill): boolean {
-    return (
-      bill.date.trim() !== '' &&
-      bill.name.trim() !== '' &&
-      bill.msName.trim() !== '' &&
-      bill.amountNumber > 0 &&
-      bill.address.trim() !== '' &&
-      bill.mobileNo.trim() !== '' &&
-      bill.email.trim() !== '' &&
-      bill.pancardNo.trim() !== '' &&
-      bill.purpose.trim() !== '' &&
-      bill.transactionId.trim() !== '' &&
-      bill.volunteerName.trim() !== ''
-    );
   }
 
   // View the bill (open PDF in new tab)
@@ -179,8 +126,6 @@ export class BillComponent implements OnInit {
 
   // Function to convert number to words (simple implementation)
   private numberToWords(amount: number): string {
-    // Implement a function to convert numbers to words
-    // This is a placeholder implementation
     return amount.toString(); // Replace with actual conversion logic
   }
 
@@ -188,5 +133,51 @@ export class BillComponent implements OnInit {
   private getVolunteerName(): string {
     const user = this.authService.getLoggedInUser();
     return user?.name || 'Unknown Volunteer'; // Fallback if user is not found
+  }
+
+  // Helper function to reset the bill object
+  private getEmptyBill(): Bill {
+    return {
+      date: '',
+      name: '',
+      msName: '',
+      amountNumber: 0,
+      amountWords: '',
+      address: '',
+      mobileNo: '',
+      email: '',
+      pancardNo: '',
+      purpose: '',
+      transactionId: '',
+      volunteerName: this.getVolunteerName() // Keep volunteer name after reset
+    };
+  }
+
+  // Validate bill inputs
+  private isValidBill(bill: Bill): boolean {
+    return (
+      bill.date.trim() !== '' &&
+      bill.name.trim() !== '' &&
+      bill.msName.trim() !== '' &&
+      bill.amountNumber > 0 &&
+      bill.address.trim() !== '' &&
+      bill.mobileNo.trim() !== '' &&
+      bill.email.trim() !== '' &&
+      bill.pancardNo.trim() !== '' &&
+      bill.purpose.trim() !== '' &&
+      bill.transactionId.trim() !== '' &&
+      bill.volunteerName.trim() !== ''
+    );
+  }
+
+  // Trigger file download
+  private triggerFileDownload(blob: Blob, fileName: string): void {
+    const fileURL = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = fileURL;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }
