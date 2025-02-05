@@ -1,4 +1,5 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,8 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
+  constructor(private router: Router) {}
+
   ngOnInit() {
     const modals = document.querySelectorAll('.modal');
     const spans = document.querySelectorAll('.close');
@@ -39,5 +42,9 @@ export class HomeComponent {
         }
       });
     }
+  }
+
+  navigateToBill() {
+    this.router.navigate(['/bill']); // Navigates to the bill page
   }
 }
