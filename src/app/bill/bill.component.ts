@@ -149,4 +149,18 @@ export class BillComponent implements OnInit {
     link.click();
     document.body.removeChild(link);
   }
+
+  // Convert amount in numbers to words
+  convertAmountToWords(): void {
+    this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
+  }
+
+  // Function to convert number to words (simple implementation)
+  private numberToWords(amount: number): string {
+    // A very simple example, you can expand this with better logic or libraries.
+    const words = [
+      'Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'
+    ];
+    return words[amount] || 'Number out of range';
+  }
 }
