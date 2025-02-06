@@ -67,36 +67,42 @@ export class BillService {
   private async downloadPdfMobile(pdfUrl: string, fileName: string) {
     try {
       console.log('Downloading PDF on mobile:', pdfUrl);
-
+  
       // Fetch PDF as Blob using Capacitor HTTP
       const response = await fetch(pdfUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch PDF: ' + response.statusText);
       }
       const blob = await response.blob();
-
+  
       // Convert Blob to Base64
       const base64Data = await this.blobToBase64(blob);
-
+  
       // Save to device storage
+      console.log('Saving PDF to device...');
       const fileResult = await Filesystem.writeFile({
         path: fileName,
         data: base64Data,
         directory: Directory.Documents,
-        recursive: true
+        recursive: true, // Ensure that directories are created if needed
       });
-
-      // Open the PDF with the system viewer
+  
+      console.log('File written successfully:', fileResult.uri);
+  
+      // Open the PDF with the system viewer after the file is written
       await FileOpener.open({
         filePath: fileResult.uri,
-        contentType: 'application/pdf'
+        contentType: 'application/pdf',
       });
+  
+      console.log('PDF opened successfully.');
     } catch (error) {
       console.error('Mobile PDF download failed:', error);
       alert('Failed to download PDF on mobile. Please try again.');
-      throw error;
+      throw error; // Re-throw error for further handling if needed
     }
   }
+  
 
   private downloadPdfWeb(pdfUrl: string, fileName: string) {
     console.log('Downloading PDF on web:', pdfUrl);
