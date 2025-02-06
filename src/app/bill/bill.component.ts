@@ -77,6 +77,20 @@ export class BillComponent implements OnInit {
     });
   }
 
+  // View Bill Method
+  async viewBill(billId: string | undefined): Promise<void> {
+    if (billId) {
+      try {
+        await this.billService.viewBillPDF(billId); // Using the new method to view PDF
+      } catch (error) {
+        console.error('Error viewing PDF:', error);
+        alert('Failed to view the PDF. Please try again.');
+      }
+    } else {
+      alert('Bill ID is undefined.');
+    }
+  }
+
   // Download PDF for bill
   async downloadPDF(billId: string | undefined): Promise<void> {
     if (billId) {

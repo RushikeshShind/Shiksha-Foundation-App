@@ -27,6 +27,9 @@ interface Bill {
   providedIn: 'root'
 })
 export class BillService {
+  viewBillPDF(billId: string) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
   constructor(private http: HttpClient, private platform: Platform) {}
