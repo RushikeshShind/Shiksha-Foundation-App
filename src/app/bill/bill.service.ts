@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Platform } from '@ionic/angular'; // For platform detection
 import { Browser } from '@capacitor/browser'; // Import Capacitor Browser plugin
+import { FileOpener } from '@capacitor-community/file-opener'; // Import Capacitor FileOpener plugin
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 interface Bill {
   date: string;
@@ -32,25 +34,31 @@ export class BillService {
   }
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
-  constructor(private http: HttpClient, private platform: Platform) {}
+  constructor(
+    private http: HttpClient,
+    private platform: Platform
+  ) {}
 
+  // Save a new bill
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill);
   }
 
+  // Fetch all bills
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
+  // Download a bill as a PDF (handles both web and mobile)
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
     try {
       if (this.platform.is('capacitor')) {
-        // Mobile logic: Open the PDF in an external browser
-        await this.openPdfInBrowser(pdfUrl);
+        // Mobile logic
+        await this.downloadPdfMobile(pdfUrl, `Bill_${billId}.pdf`);
       } else {
-        // Web logic: Trigger the PDF download
+        // Web logic
         this.downloadPdfWeb(pdfUrl, `Bill_${billId}.pdf`);
       }
     } catch (error) {
@@ -59,17 +67,44 @@ export class BillService {
     }
   }
 
-  private async openPdfInBrowser(pdfUrl: string): Promise<void> {
+  // Download PDF for mobile
+  private async downloadPdfMobile(pdfUrl: string, fileName: string) {
     try {
-      console.log('Opening PDF in browser:', pdfUrl);
-      await Browser.open({ url: pdfUrl }); // Open the URL in the browser
+      // Fetch the PDF file as a Blob
+      const response = await fetch(pdfUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch PDF: ' + response.statusText);
+      }
+      const blob = await response.blob();
+
+      // Convert the Blob to Base64
+      const base64Data = await this.blobToBase64(blob);
+
+      // Save to device storage (Documents directory)
+      const fileResult = await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.Documents, // Saving to Documents folder
+        recursive: true
+      });
+
+      console.log('File saved successfully:', fileResult);
+
+      // Open the saved PDF using FileOpener
+      await FileOpener.open({
+        filePath: fileResult.uri,
+        contentType: 'application/pdf'
+      });
+
     } catch (error) {
-      console.error('Error opening PDF in browser:', error);
-      alert('Failed to open PDF in browser. Please try again.');
+      console.error('Error during PDF download or file handling on mobile:', error);
+      alert('Failed to download PDF on mobile. Please try again.');
+      throw error;  // Rethrow for further handling
     }
   }
 
-  private downloadPdfWeb(pdfUrl: string, fileName: string): void {
+  // Web download logic
+  private downloadPdfWeb(pdfUrl: string, fileName: string) {
     this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
       (blob: Blob) => {
         const fileURL = URL.createObjectURL(blob);
@@ -82,8 +117,20 @@ export class BillService {
       },
       (error) => {
         console.error('Web PDF download failed:', error);
-        alert('Failed to download PDF on web. Please try again.');
+        alert('Failed to download PDF. Please try again.');
       }
     );
+  }
+
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        resolve(base64.split(',')[1]); // Remove data URL prefix
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 }

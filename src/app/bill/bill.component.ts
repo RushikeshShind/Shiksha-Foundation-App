@@ -81,7 +81,7 @@ export class BillComponent implements OnInit {
   async viewBill(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
-        await this.billService.viewBillPDF(billId); // Using the new method to view PDF
+        await this.billService.viewBillPDF(billId); // Call the updated method
       } catch (error) {
         console.error('Error viewing PDF:', error);
         alert('Failed to view the PDF. Please try again.');
