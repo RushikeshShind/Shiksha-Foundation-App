@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Platform } from '@ionic/angular'; // For platform detection
 import { Browser } from '@capacitor/browser'; // Import Capacitor Browser plugin
 import { FileOpener } from '@capacitor-community/file-opener'; // Import Capacitor FileOpener plugin
-import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Directory, Filesystem } from '@capacitor/filesystem'; // For filesystem access
 
 interface Bill {
   date: string;
@@ -29,9 +29,6 @@ interface Bill {
   providedIn: 'root'
 })
 export class BillService {
-  viewBillPDF(billId: string) {
-    throw new Error('Method not implemented.');
-  }
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
   constructor(
@@ -49,16 +46,28 @@ export class BillService {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
+  // View Bill Method - Open PDF in Browser
+  async viewBillPDF(billId: string): Promise<void> {
+    const pdfUrl = `${this.apiUrl}/download/${billId}`;
+    if (this.platform.is('capacitor')) {
+      // Mobile logic - open the PDF in browser
+      await Browser.open({ url: pdfUrl });
+    } else {
+      // Web logic - open the PDF in browser
+      window.open(pdfUrl, '_blank');
+    }
+  }
+
   // Download a bill as a PDF (handles both web and mobile)
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
     try {
       if (this.platform.is('capacitor')) {
-        // Mobile logic
+        // Mobile logic - handle PDF download
         await this.downloadPdfMobile(pdfUrl, `Bill_${billId}.pdf`);
       } else {
-        // Web logic
+        // Web logic - handle PDF download
         this.downloadPdfWeb(pdfUrl, `Bill_${billId}.pdf`);
       }
     } catch (error) {

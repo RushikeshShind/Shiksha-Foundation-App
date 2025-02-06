@@ -81,7 +81,7 @@ export class BillComponent implements OnInit {
   async viewBill(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
-        await this.billService.viewBillPDF(billId); // Call the updated method
+        await this.billService.viewBillPDF(billId); // This method is undefined, needs to be implemented
       } catch (error) {
         console.error('Error viewing PDF:', error);
         alert('Failed to view the PDF. Please try again.');
@@ -90,6 +90,7 @@ export class BillComponent implements OnInit {
       alert('Bill ID is undefined.');
     }
   }
+  
 
   // Download PDF for bill
   async downloadPDF(billId: string | undefined): Promise<void> {
