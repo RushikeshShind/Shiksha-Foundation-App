@@ -50,19 +50,29 @@ export class BillService {
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
-    if (this.platform.is('capacitor')) {
-      // Mobile logic
-      await this.downloadPdfMobile(pdfUrl, `Bill_${billId}.pdf`);
-    } else {
-      // Web logic
-      this.downloadPdfWeb(pdfUrl, `Bill_${billId}.pdf`);
+    try {
+      if (this.platform.is('capacitor')) {
+        // Mobile logic
+        await this.downloadPdfMobile(pdfUrl, `Bill_${billId}.pdf`);
+      } else {
+        // Web logic
+        this.downloadPdfWeb(pdfUrl, `Bill_${billId}.pdf`);
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download PDF. Please try again later.');
     }
   }
 
   private async downloadPdfMobile(pdfUrl: string, fileName: string) {
     try {
+      console.log('Downloading PDF on mobile:', pdfUrl);
+
       // Fetch PDF as Blob using Capacitor HTTP
       const response = await fetch(pdfUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch PDF: ' + response.statusText);
+      }
       const blob = await response.blob();
 
       // Convert Blob to Base64
@@ -81,24 +91,31 @@ export class BillService {
         filePath: fileResult.uri,
         contentType: 'application/pdf'
       });
-
     } catch (error) {
       console.error('Mobile PDF download failed:', error);
+      alert('Failed to download PDF on mobile. Please try again.');
       throw error;
     }
   }
 
   private downloadPdfWeb(pdfUrl: string, fileName: string) {
-    // Web: Use standard HTTP client and trigger file download
-    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe((blob: Blob) => {
-      const fileURL = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = fileURL;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+    console.log('Downloading PDF on web:', pdfUrl);
+
+    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
+      (blob: Blob) => {
+        const fileURL = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = fileURL;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      },
+      (error) => {
+        console.error('Web PDF download failed:', error);
+        alert('Failed to download PDF on web. Please try again.');
+      }
+    );
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
