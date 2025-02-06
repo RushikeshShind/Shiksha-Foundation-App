@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { FileOpener } from '@capacitor-community/file-opener';
 import { Platform } from '@ionic/angular'; // For platform detection
+import { Browser } from '@capacitor/browser'; // Import Capacitor Browser plugin
 
-// Define the Bill interface
 interface Bill {
   date: string;
   name: string;
@@ -22,7 +20,7 @@ interface Bill {
   chequeDetails?: string;
   remark?: string;
   volunteerName: string;
-  id?: string; // Optional for new bills before saving
+  id?: string;
 }
 
 @Injectable({
@@ -31,31 +29,25 @@ interface Bill {
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
-  constructor(
-    private http: HttpClient,
-    private platform: Platform // For platform detection
-  ) {}
+  constructor(private http: HttpClient, private platform: Platform) {}
 
-  // Save a new bill
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill);
   }
 
-  // Fetch all bills
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
-  // Download a bill as a PDF (handles both web and mobile)
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
     try {
       if (this.platform.is('capacitor')) {
-        // Mobile logic
-        await this.downloadPdfMobile(pdfUrl, `Bill_${billId}.pdf`);
+        // Mobile logic: Open the PDF in an external browser
+        await this.openPdfInBrowser(pdfUrl);
       } else {
-        // Web logic
+        // Web logic: Trigger the PDF download
         this.downloadPdfWeb(pdfUrl, `Bill_${billId}.pdf`);
       }
     } catch (error) {
@@ -64,48 +56,17 @@ export class BillService {
     }
   }
 
-  private async downloadPdfMobile(pdfUrl: string, fileName: string) {
+  private async openPdfInBrowser(pdfUrl: string): Promise<void> {
     try {
-      console.log('Downloading PDF on mobile:', pdfUrl);
-  
-      // Fetch the PDF file as a Blob
-      const response = await fetch(pdfUrl);
-      if (!response.ok) {
-        throw new Error('Failed to fetch PDF: ' + response.statusText);
-      }
-      const blob = await response.blob();
-  
-      // Convert the Blob to Base64
-      const base64Data = await this.blobToBase64(blob);
-  
-      // Save to device storage (Documents directory)
-      const fileResult = await Filesystem.writeFile({
-        path: fileName,
-        data: base64Data,
-        directory: Directory.Documents, // Saving to Documents folder
-        recursive: true
-      });
-  
-      console.log('File saved successfully:', fileResult);
-  
-      // Open the saved PDF using FileOpener
-      await FileOpener.open({
-        filePath: fileResult.uri,
-        contentType: 'application/pdf'
-      });
-  
+      console.log('Opening PDF in browser:', pdfUrl);
+      await Browser.open({ url: pdfUrl }); // Open the URL in the browser
     } catch (error) {
-      console.error('Error during PDF download or file handling on mobile:', error);
-      alert('Failed to download PDF on mobile. Please try again.');
-      throw error;  // Rethrow for further handling
+      console.error('Error opening PDF in browser:', error);
+      alert('Failed to open PDF in browser. Please try again.');
     }
   }
-  
-  
 
-  private downloadPdfWeb(pdfUrl: string, fileName: string) {
-    console.log('Downloading PDF on web:', pdfUrl);
-
+  private downloadPdfWeb(pdfUrl: string, fileName: string): void {
     this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
       (blob: Blob) => {
         const fileURL = URL.createObjectURL(blob);
@@ -121,17 +82,5 @@ export class BillService {
         alert('Failed to download PDF on web. Please try again.');
       }
     );
-  }
-
-  private blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        resolve(base64.split(',')[1]); // Remove data URL prefix
-      };
-      reader.readAsDataURL(blob);
-    });
   }
 }

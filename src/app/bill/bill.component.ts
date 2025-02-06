@@ -55,7 +55,7 @@ export class BillComponent implements OnInit {
           this.loadBills();
           this.bill = this.getEmptyBill();
         },
-        error: (err: any) => { // Fixed implicit `any` type issue
+        error: (err: any) => {
           console.error('Error saving bill:', err);
           alert('Failed to save the bill. Please try again.');
         }
@@ -70,7 +70,7 @@ export class BillComponent implements OnInit {
       next: (bills) => {
         this.bills = bills;
       },
-      error: (err: any) => { // Fixed implicit `any` type issue
+      error: (err: any) => {
         console.error('Error fetching bills:', err);
         alert('Failed to load bills. Please try again.');
       }
@@ -85,20 +85,6 @@ export class BillComponent implements OnInit {
       } catch (error) {
         console.error('Error downloading PDF:', error);
         alert('Failed to download the PDF. Please try again.');
-      }
-    } else {
-      alert('Bill ID is undefined.');
-    }
-  }
-
-  // View the bill (open PDF in new tab)
-  async viewBill(billId: string | undefined): Promise<void> {
-    if (billId) {
-      try {
-        await this.billService.downloadBillPDF(billId); // Removed `.subscribe()`, since it's a Promise
-      } catch (error) {
-        console.error('Error viewing PDF:', error);
-        alert('Failed to view the PDF. Please try again.');
       }
     } else {
       alert('Bill ID is undefined.');
