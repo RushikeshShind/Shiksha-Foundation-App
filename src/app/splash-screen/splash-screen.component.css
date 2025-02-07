@@ -1,16 +1,20 @@
 .splash-container {
-  position: fixed; /* Ensures the container covers the entire screen */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Full width */
-  height: 100vh; /* Full height */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  margin: 0; /* Removes any unwanted margins */
-  padding: 0; /* Removes any unwanted paddings */
-  box-sizing: border-box; /* Ensures consistent sizing */
+  
+    position: fixed; /* Covers the entire screen */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/assets/background (1).png'); /* Add your image path here */
+    background-size: cover; /* Ensure the image covers the container */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; /* Center the image */
+    overflow: hidden; /* Prevent content overflow */
+  
 }
 
 .background-circle {
