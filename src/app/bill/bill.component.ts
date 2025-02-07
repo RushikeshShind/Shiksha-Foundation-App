@@ -80,7 +80,6 @@ throw new Error('Method not implemented.');
     });
   }
 
-  // 📌 View Bill in Browser (For Web)
   async viewBill(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
@@ -94,7 +93,6 @@ throw new Error('Method not implemented.');
     }
   }
 
-  // 📌 Download Bill as PDF
   async downloadPDF(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
@@ -105,6 +103,19 @@ throw new Error('Method not implemented.');
       }
     } else {
       alert('Bill ID is undefined.');
+    }
+  }
+
+  downloadExcel(): void {
+    if (this.bills.length === 0) {
+      alert('No bills available to export.');
+      return;
+    }
+    try {
+      this.billService.downloadExcel(this.bills);
+    } catch (error) {
+      console.error('Error exporting Excel:', error);
+      alert('Failed to export Excel file. Please try again.');
     }
   }
 
