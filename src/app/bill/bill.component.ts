@@ -37,6 +37,9 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
+convertAmountToWords() {
+throw new Error('Method not implemented.');
+}
   bill: Bill = this.getEmptyBill();
   bills: Bill[] = [];
 
