@@ -6,6 +6,7 @@ import { Browser } from '@capacitor/browser';
 import { FileOpener } from '@capacitor-community/file-opener';
 import { Filesystem, Directory, PermissionStatus } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
+import * as XLSX from 'xlsx';
 
 interface Bill {
   date: string;
@@ -152,5 +153,29 @@ export class BillService {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
+  }
+
+  // 📌 Generate and Download Excel
+  downloadExcel(bills: Bill[]): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(bills.map(bill => ({
+      'Sr. No': bill.id,
+      'Receipt No.': bill.transactionId,
+      'Date': bill.date,
+      'Name': bill.name,
+      'M/s Name': bill.msName,
+      'Mobile No': bill.mobileNo,
+      'Email ID': bill.email,
+      'Amount': bill.amountNumber,
+      'Address': bill.address,
+      'Pancard No': bill.pancardNo,
+      'Purpose of Donation': bill.purpose,
+      'Remark': bill.remark,
+      'Volunteer': bill.volunteerName
+    })));
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bills');
+
+    XLSX.writeFile(wb, 'Bills.xlsx');
   }
 }

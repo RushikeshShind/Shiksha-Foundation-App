@@ -94,3 +94,16 @@ button:focus {
 button:hover {
   background: linear-gradient(134deg, #6e00c1, #d100f5);
 }
+button {
+  background: linear-gradient(135deg, #6e00c1, #d100f5);
+  padding: 10px;
+  margin-right: 5px; /* Add spacing between buttons */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: linear-gradient(134deg, #6e00c1, #d100f5);
+}
