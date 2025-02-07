@@ -26,7 +26,6 @@
     "@capacitor/cli": "^7.0.1",
     "@capacitor/core": "^7.0.1",
     "@capacitor/filesystem": "^7.0.0",
-    "@capacitor/http": "^0.0.2",
     "@ionic/angular": "^8.4.3",
     "app": "file:",
     "cordova-plugin-file-opener2": "^4.0.0",

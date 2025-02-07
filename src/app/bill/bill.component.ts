@@ -77,11 +77,11 @@ export class BillComponent implements OnInit {
     });
   }
 
-  // View Bill Method
+  // 📌 View Bill in Browser (For Web)
   async viewBill(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
-        await this.billService.viewBillPDF(billId); // This method is undefined, needs to be implemented
+        await this.billService.viewBillPDF(billId);
       } catch (error) {
         console.error('Error viewing PDF:', error);
         alert('Failed to view the PDF. Please try again.');
@@ -90,9 +90,8 @@ export class BillComponent implements OnInit {
       alert('Bill ID is undefined.');
     }
   }
-  
 
-  // Download PDF for bill
+  // 📌 Download Bill as PDF
   async downloadPDF(billId: string | undefined): Promise<void> {
     if (billId) {
       try {
@@ -130,14 +129,5 @@ export class BillComponent implements OnInit {
 
   private isValidBill(bill: Bill): boolean {
     return bill.date.trim() !== '' && bill.name.trim() !== '' && bill.amountNumber > 0;
-  }
-
-  convertAmountToWords(): void {
-    this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
-  }
-
-  private numberToWords(amount: number): string {
-    const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-    return words[amount] || 'Number out of range';
   }
 }
