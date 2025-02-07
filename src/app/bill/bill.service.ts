@@ -54,37 +54,45 @@ export class BillService {
     }
   }
 
-// 📌 Open PDF in the default web browser (Chrome/Safari/etc.)
-async downloadBillPDF(billId: string): Promise<void> {
-  const pdfUrl = `${this.apiUrl}/download/${billId}`;
+  // ✅ Open PDF in the default web browser (Chrome/Safari/etc.)
+  async downloadBillPDF(billId: string): Promise<void> {
+    const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
-  if (this.platform.is('capacitor')) {
-    // ✅ Open the link in the default browser on mobile
-    await Browser.open({ url: pdfUrl });
-  } else {
-    // ✅ Open in new tab on desktop/web
-    window.open(pdfUrl, '_blank');
+    if (this.platform.is('capacitor')) {
+      // ✅ Open the link in the default browser on mobile
+      await Browser.open({ url: pdfUrl });
+    } else {
+      // ✅ Open in new tab on desktop/web
+      window.open(pdfUrl, '_blank');
+    }
   }
-}
 
-  // 📌 Request Storage Permission Before Download
-  private async requestStoragePermission(): Promise<boolean> {
+  // ✅ Ensure Permission Before Download
+  async requestStoragePermission(): Promise<boolean> {
     if (!Capacitor.isNativePlatform()) return true; // Skip for Web
 
-    const permissionStatus: PermissionStatus = await Filesystem.checkPermissions();
-    if (permissionStatus.publicStorage === 'granted') {
-      return true;
-    } else {
+    try {
+      const permissionStatus: PermissionStatus = await Filesystem.checkPermissions();
+      if (permissionStatus.publicStorage === 'granted') {
+        return true;
+      }
+
+      // Request permission if not granted
       const request = await Filesystem.requestPermissions();
       if (request.publicStorage !== 'granted') {
         alert('Storage permission is required to download files.');
         return false;
       }
+
+      return true;
+    } catch (error) {
+      console.error('Error requesting storage permission:', error);
+      alert('Failed to request storage permission.');
+      return false;
     }
-    return true;
   }
 
-  // 📌 Mobile PDF Download (Handles Permissions & File Saving)
+  // ✅ Updated Mobile PDF Download & Open Function
   private async downloadPdfMobile(pdfUrl: string, fileName: string) {
     const hasPermission = await this.requestStoragePermission();
     if (!hasPermission) return;
@@ -96,7 +104,7 @@ async downloadBillPDF(billId: string): Promise<void> {
       const blob = await response.blob();
       const base64Data = await this.blobToBase64(blob);
 
-      // Save file in the "Documents" directory
+      // ✅ Save file in "Documents" directory
       const fileResult = await Filesystem.writeFile({
         path: `Download/${fileName}`,
         data: base64Data,
@@ -106,9 +114,9 @@ async downloadBillPDF(billId: string): Promise<void> {
 
       const fileUri = await Filesystem.getUri({ directory: Directory.Documents, path: `Download/${fileName}` });
 
-      console.log('File saved:', fileUri.uri);
+      console.log('File saved at:', fileUri.uri);
 
-      // ✅ Show popup with "Click to Open" option
+      // ✅ Show popup before opening the file
       if (confirm('Download complete! Click OK to open the PDF.')) {
         await FileOpener.open({
           filePath: fileUri.uri,
@@ -117,19 +125,24 @@ async downloadBillPDF(billId: string): Promise<void> {
       }
 
     } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to download PDF on mobile.');
+      console.error('Error opening PDF:', error);
+      alert('Failed to download/open PDF. Check permissions.');
     }
   }
 
   // 📌 Web PDF Download
   private downloadPdfWeb(pdfUrl: string, fileName: string) {
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading PDF on web:', error);
+      alert('Failed to download the PDF. Please try again.');
+    }
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
