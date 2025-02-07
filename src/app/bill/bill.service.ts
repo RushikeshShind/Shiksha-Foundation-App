@@ -73,34 +73,42 @@ export class BillService {
     }
   }
 
-  // 📌 Mobile Download
-  private async downloadPdfMobile(pdfUrl: string, fileName: string) {
-    try {
-      const response = await fetch(pdfUrl);
-      if (!response.ok) throw new Error('Failed to fetch PDF');
+ // 📌 Mobile PDF Download
+private async downloadPdfMobile(pdfUrl: string, fileName: string) {
+  try {
+    const response = await fetch(pdfUrl);
+    if (!response.ok) throw new Error('Failed to fetch PDF');
 
-      const blob = await response.blob();
-      const base64Data = await this.blobToBase64(blob);
+    const blob = await response.blob();
+    const base64Data = await this.blobToBase64(blob);
 
-      const fileResult = await Filesystem.writeFile({
-        path: `Download/${fileName}`,
-        data: base64Data,
-        directory: Directory.Documents, 
-        recursive: true
-      });
+    // Save file in the "Documents" directory
+    const fileResult = await Filesystem.writeFile({
+      path: `Download/${fileName}`,
+      data: base64Data,
+      directory: Directory.Documents,
+      recursive: true
+    });
 
-      const fileUri = await Filesystem.getUri({ directory: Directory.Documents, path: `Download/${fileName}` });
+    // Get the file path
+    const fileUri = await Filesystem.getUri({ directory: Directory.Documents, path: `Download/${fileName}` });
 
+    console.log('File saved:', fileUri.uri);
+
+    // ✅ Show popup with "Click to Open" option
+    if (confirm('Download complete! Click OK to open the PDF.')) {
       await FileOpener.open({
         filePath: fileUri.uri,
         contentType: 'application/pdf'
       });
-
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to download PDF on mobile.');
     }
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to download PDF on mobile.');
   }
+}
+
 
   // 📌 Web Download
   private downloadPdfWeb(pdfUrl: string, fileName: string) {
