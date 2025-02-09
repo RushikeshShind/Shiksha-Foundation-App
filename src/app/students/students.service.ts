@@ -27,6 +27,11 @@ export class StudentsService {
     return `${this.apiUrl}/${studentId}/image`;  // Adjust the URL pattern as needed
   }
 
+  // Get student PDF URL
+  getStudentPdfUrl(studentId: string): string {
+    return `${this.apiUrl}/${studentId}/pdf`;  // Adjust the URL pattern as needed for PDFs
+  }
+
   // Delete a student (DELETE request)
   deleteStudent(studentId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${studentId}`);

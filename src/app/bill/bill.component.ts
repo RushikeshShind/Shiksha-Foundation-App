@@ -37,9 +37,12 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
-convertAmountToWords() {
-throw new Error('Method not implemented.');
-}
+  viewBill(arg0: string|undefined) {
+    throw new Error('Method not implemented.');
+  }
+  convertAmountToWords() {
+    throw new Error('Method not implemented.');
+  }
   bill: Bill = this.getEmptyBill();
   bills: Bill[] = [];
 
@@ -78,19 +81,6 @@ throw new Error('Method not implemented.');
         alert('Failed to load bills. Please try again.');
       }
     });
-  }
-
-  async viewBill(billId: string | undefined): Promise<void> {
-    if (billId) {
-      try {
-        await this.billService.viewBillPDF(billId);
-      } catch (error) {
-        console.error('Error viewing PDF:', error);
-        alert('Failed to view the PDF. Please try again.');
-      }
-    } else {
-      alert('Bill ID is undefined.');
-    }
   }
 
   async downloadPDF(billId: string | undefined): Promise<void> {

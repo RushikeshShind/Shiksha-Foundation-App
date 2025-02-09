@@ -6,12 +6,6 @@ import { LeftSidebarComponent } from './left-sidebar/left-sidebar.component';
 import { MainComponent } from './main/main.component';
 import { HeaderComponent } from './header/header.component'; // Import HeaderComponent
 
-// Import Capacitor's Filesystem Plugin
-import { Filesystem, Directory } from '@capacitor/filesystem';
-
-// Import Capacitor's Core for platform check
-import { Capacitor } from '@capacitor/core';
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -47,28 +41,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLeftSidebarCollapsed.set(this.screenWidth() < 768);
-
-    // Request permission on Android for file access
-    if (Capacitor.isNativePlatform()) {
-      this.requestStoragePermission();
-    }
-  }
-
-  // Request storage permission for Android/iOS devices
-  async requestStoragePermission() {
-    if (Capacitor.isNativePlatform()) {
-      try {
-        const permissionStatus = await Filesystem.requestPermissions();
-        
-        if (permissionStatus.publicStorage === 'granted') {
-          console.log('Storage permission granted');
-        } else {
-          alert('Storage permission is required to download the PDF.');
-        }
-      } catch (error) {
-        console.error('Permission request failed', error);
-      }
-    }
   }
 
   changeIsLeftSidebarCollapsed(isLeftSidebarCollapsed: boolean): void {

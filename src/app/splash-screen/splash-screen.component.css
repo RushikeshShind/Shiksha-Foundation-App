@@ -47,7 +47,7 @@
 .logo-container .logo {
   width: 250px; /* Adjust width as needed for responsiveness */
   height: auto;
-  animation: bounce 2s infinite;
+  animation: bounce 1s infinite;
 }
 
 .logo-container .tagline {
@@ -55,7 +55,7 @@
   font-size: 1.2rem; /* Adjust font size for better visibility */
   margin-top: 10px;
   font-weight: 300;
-  animation: fadeInUp 2s;
+  animation: fadeInUp 1s;
 }
 
 @keyframes expandCircle {
