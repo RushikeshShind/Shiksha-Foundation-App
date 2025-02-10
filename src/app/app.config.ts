@@ -14,6 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     importProvidersFrom(FormsModule, HttpClientModule), // ✅ Add HttpClientModule
-    BillService // ✅ Provide BillService globally
+    
   ]
 };
