@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import * as XLSX from 'xlsx';
 
 interface Bill {
@@ -35,20 +36,18 @@ export class BillService {
     private http: HttpClient,
     private platform: Platform,
     private inAppBrowser: InAppBrowser,
-    private file: File
+    private file: File,
+    private fileTransfer: FileTransfer
   ) {}
 
-  // 📌 Save a new bill
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill);
   }
 
-  // 📌 Fetch all bills
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(`${this.apiUrl}`);
   }
 
-  // 📌 View Bill PDF in Browser
   async viewBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     if (this.platform.is('cordova')) {
@@ -58,17 +57,24 @@ export class BillService {
     }
   }
 
-  // ✅ Open PDF in the default web browser (Chrome/Safari/etc.)
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     if (this.platform.is('cordova')) {
-      this.inAppBrowser.create(pdfUrl, '_system');
+      const fileTransfer: FileTransferObject = this.fileTransfer.create();
+      const filePath = this.file.externalRootDirectory + 'Download/' + `Bill_${billId}.pdf`;
+
+      try {
+        await fileTransfer.download(pdfUrl, filePath);
+        alert('PDF downloaded successfully! Check the Downloads folder.');
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+        alert('Failed to download the PDF.');
+      }
     } else {
       window.open(pdfUrl, '_blank');
     }
   }
 
-  // 📌 Generate and Download Excel
   downloadExcel(bills: Bill[]): void {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(bills.map(bill => ({
       'Sr. No': bill.id,
