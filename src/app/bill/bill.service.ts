@@ -23,7 +23,9 @@ interface Bill {
   volunteerName: string;
 }
 
-declare const window: any; // ✅ Declaring `window` to avoid TypeScript errors
+// ✅ Declare Cordova & Window globally to avoid TypeScript errors
+declare const window: any;
+declare let cordova: any;
 
 @Injectable()
 export class BillService {
@@ -46,21 +48,82 @@ export class BillService {
     );
   }
 
-  // ✅ Download PDF
+  // ✅ Request Storage Permission (For Android)
+  async requestStoragePermission(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins && cordova.plugins.permissions) {
+        const permissions = cordova.plugins.permissions;
+
+        permissions.requestPermission(
+          permissions.WRITE_EXTERNAL_STORAGE,
+          (status: { hasPermission: boolean }) => {
+            if (!status.hasPermission) {
+              alert('Storage permission denied! Grant permission manually.');
+              reject('Permission Denied');
+            } else {
+              resolve();
+            }
+          },
+          (error: any) => {
+            console.error('Storage permission request failed', error);
+            reject(error);
+          }
+        );
+      } else {
+        resolve(); // ✅ If not running on a Cordova app, no need to request permission
+      }
+    });
+  }
+
+  // ✅ Download PDF (Handles both Web & Cordova APK)
   async downloadBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     console.log('Downloading PDF from:', pdfUrl);
 
-    if (window.cordova && window.cordova.InAppBrowser) {
-      console.log('Opening PDF in Cordova InAppBrowser...');
-      window.cordova.InAppBrowser.open(pdfUrl, '_system', 'location=yes');
+    if (window.cordova) {
+      console.log('Downloading PDF in Cordova environment...');
+
+      try {
+        await this.requestStoragePermission(); // ✅ Ensure storage permission is granted
+
+        const fileTransfer = new window.FileTransfer();
+        const filePath = window.cordova.file.externalDataDirectory + 'bill.pdf';
+
+        fileTransfer.download(
+          pdfUrl,
+          filePath,
+          (entry: any) => {
+            console.log('Download complete:', entry.toURL());
+
+            window.cordova.plugins.fileOpener2.open(
+              entry.toURL(),
+              'application/pdf',
+              {
+                error: (e: any) => {
+                  console.log('Error opening file', e);
+                  alert('Cannot open PDF. Please check your PDF viewer.');
+                },
+                success: () => {
+                  console.log('File opened successfully');
+                }
+              }
+            );
+          },
+          (error: any) => {
+            console.error('Download error:', error);
+            alert('Failed to download the PDF.');
+          }
+        );
+      } catch (error) {
+        console.error('Permission error:', error);
+      }
     } else {
       console.log('Opening PDF in web browser...');
       window.open(pdfUrl, '_blank');
     }
   }
 
-  // ✅ View PDF (Same logic as download but used differently)
+  // ✅ View PDF (Opens inside Cordova's InAppBrowser)
   async viewBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     console.log('Viewing PDF from:', pdfUrl);
@@ -74,7 +137,7 @@ export class BillService {
     }
   }
 
-  // ✅ Export to Excel
+  // ✅ Export Bills to Excel
   downloadExcel(bills: Bill[]): void {
     if (bills.length === 0) {
       alert('No bills available to export.');
@@ -118,15 +181,17 @@ export class BillService {
     }
   }
 
-  // ✅ Handle API errors
+  // ✅ Handle API errors properly
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('API Error:', error);
     let errorMessage = 'An unexpected error occurred. Please try again.';
+    
     if (error.status === 0) {
       errorMessage = 'Network error - please check if the backend server is running.';
     } else if (error.error?.message) {
       errorMessage = error.error.message;
     }
+
     return throwError(() => new Error(errorMessage));
   }
 }
