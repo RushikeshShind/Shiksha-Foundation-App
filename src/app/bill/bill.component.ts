@@ -34,7 +34,6 @@ interface Bill {
     CommonModule,
     HttpClientModule,
   ],
-  providers: [BillService]
 })
 export class BillComponent implements OnInit {
 convertAmountToWords() {
