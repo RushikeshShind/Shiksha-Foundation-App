@@ -32,7 +32,9 @@ interface Bill {
   imports: [
     FormsModule,
     CommonModule,
+    HttpClientModule,
   ],
+  providers: [BillService]
 })
 export class BillComponent implements OnInit {
 convertAmountToWords() {
@@ -40,67 +42,83 @@ throw new Error('Method not implemented.');
 }
   bill: Bill = this.getEmptyBill();
   bills: Bill[] = [];
+  isLoading = false; // ✅ Loading indicator for API requests
+  errorMessage: string | null = null; // ✅ Error message handling
 
   constructor(private billService: BillService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadBills();
     this.bill.volunteerName = this.getVolunteerName();
+    this.loadBills();
   }
 
   submitBill(): void {
-    if (this.isValidBill(this.bill)) {
-      this.billService.saveBill(this.bill).subscribe({
-        next: () => {
-          alert('Bill saved successfully!');
-          this.loadBills();
-          this.bill = this.getEmptyBill();
-        },
-        error: (err: any) => {
-          console.error('Error saving bill:', err);
-          alert('Failed to save the bill. Please try again.');
-        }
-      });
-    } else {
+    if (!this.isValidBill(this.bill)) {
       alert('Please fill in all required fields.');
+      return;
     }
-  }
 
-  loadBills(): void {
-    this.billService.getBills().subscribe({
-      next: (bills) => {
-        this.bills = bills;
+    this.isLoading = true;
+    this.billService.saveBill(this.bill).subscribe({
+      next: () => {
+        alert('Bill saved successfully!');
+        this.loadBills();
+        this.bill = this.getEmptyBill();
       },
-      error: (err: any) => {
-        console.error('Error fetching bills:', err);
-        alert('Failed to load bills. Please try again.');
+      error: (err) => {
+        console.error('Error saving bill:', err);
+        this.errorMessage = 'Failed to save the bill. Please try again.';
+        alert(this.errorMessage);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }
 
-  async viewBill(billId: string | undefined): Promise<void> {
-    if (billId) {
-      try {
-        await this.billService.viewBillPDF(billId);
-      } catch (error) {
-        console.error('Error opening PDF:', error);
-        alert('Failed to open the PDF. Please try again.');
+  loadBills(): void {
+    this.isLoading = true;
+    this.billService.getBills().subscribe({
+      next: (bills) => {
+        this.bills = bills;
+        console.log('Fetched Bills:', this.bills); // ✅ Debugging
+      },
+      error: (err) => {
+        console.error('Error fetching bills:', err);
+        this.errorMessage = 'Failed to load bills. Please try again.';
+        alert(this.errorMessage);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
-    } else {
+    });
+  }
+
+  async viewBill(billId?: string): Promise<void> {
+    if (!billId) {
       alert('Bill ID is undefined.');
+      return;
+    }
+
+    try {
+      await this.billService.viewBillPDF(billId);
+    } catch (error) {
+      console.error('Error opening PDF:', error);
+      alert('Failed to open the PDF. Please try again.');
     }
   }
 
-  async downloadPDF(billId: string | undefined): Promise<void> {
-    if (billId) {
-      try {
-        await this.billService.downloadBillPDF(billId);
-      } catch (error) {
-        console.error('Error downloading PDF:', error);
-        alert('Failed to download the PDF. Please try again.');
-      }
-    } else {
+  async downloadPDF(billId?: string): Promise<void> {
+    if (!billId) {
       alert('Bill ID is undefined.');
+      return;
+    }
+
+    try {
+      await this.billService.downloadBillPDF(billId);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download the PDF. Please try again.');
     }
   }
 
@@ -109,6 +127,7 @@ throw new Error('Method not implemented.');
       alert('No bills available to export.');
       return;
     }
+
     try {
       this.billService.downloadExcel(this.bills);
     } catch (error) {

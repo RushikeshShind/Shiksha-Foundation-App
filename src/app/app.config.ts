@@ -5,7 +5,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { importProvidersFrom } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { BillService } from './bill/bill.service'; // ✅ Import the service
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +13,5 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     importProvidersFrom(FormsModule, HttpClientModule), // ✅ Provide HttpClientModule
     provideHttpClient(withInterceptorsFromDi()), // ✅ Fix HttpClient for Angular 16+
-    BillService // ✅ Add BillService here
   ]
 };
