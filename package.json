@@ -25,6 +25,7 @@
     "@awesome-cordova-plugins/file-transfer": "^6.14.0",
     "@awesome-cordova-plugins/in-app-browser": "^6.14.0",
     "@ionic/angular": "^8.4.3",
+    "app": "file:",
     "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.2",
     "prettier": "^3.3.3",

@@ -114,7 +114,7 @@ export class BillComponent implements OnInit {
       alert('Failed to open the PDF.');
     }
   }
-
+  
   async downloadPDF(billId?: string): Promise<void> {
     if (!billId) {
       alert('Bill ID is required for downloading.');
@@ -127,6 +127,7 @@ export class BillComponent implements OnInit {
       alert('Failed to download the PDF.');
     }
   }
+  
 
   downloadExcel(): void {
     if (this.bills.length === 0) {
@@ -154,7 +155,9 @@ export class BillComponent implements OnInit {
       pancardNo: '',
       purpose: '',
       transactionId: '',
+      chequeDetails: '',
       volunteerName: '',
+      remark:'',
     };
   }
 
