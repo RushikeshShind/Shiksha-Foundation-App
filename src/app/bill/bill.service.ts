@@ -45,9 +45,9 @@ export class BillService {
   }
 
   getBills(): Observable<Bill[]> {
-    return this.http.get<Bill[]>(`${this.apiUrl}`);
+    console.log('Fetching bills from:', this.apiUrl); // ✅ Debugging log
+    return this.http.get<Bill[]>(this.apiUrl);
   }
-
   async viewBillPDF(billId: string): Promise<void> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     if (this.platform.is('cordova')) {

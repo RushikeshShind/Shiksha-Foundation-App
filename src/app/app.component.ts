@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
     // ✅ Check if the app is stuck on splash and navigate to the correct page
     setTimeout(() => {
       if (this.router.url === '/splash') {
-        this.router.navigate(['/dashboard']); // Change to your default route
+        this.router.navigate(['/home']); // Change to your default route
       }
     }, 2000); // Adjust timeout as needed
   }
