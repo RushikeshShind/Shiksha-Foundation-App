@@ -32,7 +32,6 @@ interface Bill {
   imports: [
     FormsModule,
     CommonModule,
-    HttpClientModule,
   ],
 })
 export class BillComponent implements OnInit {
