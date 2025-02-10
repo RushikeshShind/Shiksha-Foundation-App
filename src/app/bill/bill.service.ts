@@ -60,8 +60,10 @@ export class BillService {
       alert('No bills available to export.');
       return;
     }
-
+  
     try {
+      console.log('📝 Preparing data for export...', bills);
+  
       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
         bills.map(bill => ({
           'Sr. No': bill.id,
@@ -79,13 +81,19 @@ export class BillService {
           'Volunteer': bill.volunteerName
         }))
       );
-
+  
+      console.log('📊 Worksheet created:', ws);
+  
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Bills');
+  
+      console.log('📁 Writing file: Bills.xlsx...');
       XLSX.writeFile(wb, 'Bills.xlsx');
+  
+      console.log('✅ Excel file exported successfully!');
     } catch (error) {
-      console.error('Error exporting Excel:', error);
-      alert('Failed to export Excel file.');
+      console.error('❌ Error exporting Excel:', error);
+      alert('Failed to export Excel file. Check console for details.');
     }
   }
 
