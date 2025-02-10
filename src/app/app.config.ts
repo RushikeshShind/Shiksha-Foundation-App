@@ -11,7 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
-    importProvidersFrom(FormsModule, HttpClientModule), // ✅ Provide HttpClientModule
-    provideHttpClient(withInterceptorsFromDi()), // ✅ Fix HttpClient for Angular 16+
+    importProvidersFrom(FormsModule, HttpClientModule), // ✅ Add HttpClientModule
+    provideHttpClient(withInterceptorsFromDi()) // ✅ Required for HTTP requests
   ]
 };
