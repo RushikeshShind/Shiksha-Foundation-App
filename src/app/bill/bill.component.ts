@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { BillService } from '../bill/bill.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from '../auth.service';
 
 interface Bill {
+  id?: string;
   date: string;
   name: string;
   msName: string;
@@ -21,7 +22,6 @@ interface Bill {
   chequeDetails?: string;
   remark?: string;
   volunteerName: string;
-  id?: string;
 }
 
 @Component({
@@ -32,24 +32,37 @@ interface Bill {
   imports: [
     FormsModule,
     CommonModule,
-    HttpClientModule,
+    HttpClientModule, // ✅ Required for API calls
   ],
-  providers: [BillService]
+  providers: [BillService] // ✅ Provide locally like StudentsComponent
 })
 export class BillComponent implements OnInit {
-convertAmountToWords() {
-throw new Error('Method not implemented.');
-}
-  bill: Bill = this.getEmptyBill();
   bills: Bill[] = [];
-  isLoading = false; // ✅ Loading indicator for API requests
-  errorMessage: string | null = null; // ✅ Error message handling
+  bill: Bill = this.getEmptyBill();
+  isLoading = false;
+  errorMessage: string | null = null;
 
-  constructor(private billService: BillService, private authService: AuthService) {}
+  constructor(private billService: BillService) {}
 
   ngOnInit(): void {
-    this.bill.volunteerName = this.getVolunteerName();
     this.loadBills();
+  }
+
+  loadBills(): void {
+    this.isLoading = true;
+    this.billService.getBills().subscribe({
+      next: (bills) => {
+        this.bills = bills;
+        console.log('Fetched Bills:', this.bills);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error fetching bills:', err);
+        this.errorMessage = 'Failed to load bills. Please try again.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   submitBill(): void {
@@ -60,15 +73,14 @@ throw new Error('Method not implemented.');
 
     this.isLoading = true;
     this.billService.saveBill(this.bill).subscribe({
-      next: () => {
+      next: (savedBill) => {
         alert('Bill saved successfully!');
-        this.loadBills();
+        this.bills.push(savedBill);
         this.bill = this.getEmptyBill();
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Error saving bill:', err);
         this.errorMessage = 'Failed to save the bill. Please try again.';
-        alert(this.errorMessage);
       },
       complete: () => {
         this.isLoading = false;
@@ -76,49 +88,43 @@ throw new Error('Method not implemented.');
     });
   }
 
-  loadBills(): void {
-    this.isLoading = true;
-    this.billService.getBills().subscribe({
-      next: (bills) => {
-        this.bills = bills;
-        console.log('Fetched Bills:', this.bills); // ✅ Debugging
-      },
-      error: (err) => {
-        console.error('Error fetching bills:', err);
-        this.errorMessage = 'Failed to load bills. Please try again.';
-        alert(this.errorMessage);
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+  // ✅ Fix: Add convertAmountToWords method
+  convertAmountToWords(): void {
+    if (this.bill.amountNumber > 0) {
+      this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
+    }
   }
 
+  // ✅ Utility function to convert numbers to words
+  numberToWords(amount: number): string {
+    const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    return words[amount] || amount.toString();
+  }
+
+  // ✅ Fix: Add viewBill method
   async viewBill(billId?: string): Promise<void> {
     if (!billId) {
-      alert('Bill ID is undefined.');
+      alert('Bill ID is required for viewing.');
       return;
     }
-
     try {
       await this.billService.viewBillPDF(billId);
     } catch (error) {
       console.error('Error opening PDF:', error);
-      alert('Failed to open the PDF. Please try again.');
+      alert('Failed to open the PDF.');
     }
   }
 
   async downloadPDF(billId?: string): Promise<void> {
     if (!billId) {
-      alert('Bill ID is undefined.');
+      alert('Bill ID is required for downloading.');
       return;
     }
-
     try {
       await this.billService.downloadBillPDF(billId);
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      alert('Failed to download the PDF. Please try again.');
+      alert('Failed to download the PDF.');
     }
   }
 
@@ -127,18 +133,12 @@ throw new Error('Method not implemented.');
       alert('No bills available to export.');
       return;
     }
-
     try {
       this.billService.downloadExcel(this.bills);
     } catch (error) {
       console.error('Error exporting Excel:', error);
-      alert('Failed to export Excel file. Please try again.');
+      alert('Failed to export Excel file.');
     }
-  }
-
-  private getVolunteerName(): string {
-    const user = this.authService.getLoggedInUser();
-    return user?.name || 'Unknown Volunteer';
   }
 
   private getEmptyBill(): Bill {
@@ -154,7 +154,7 @@ throw new Error('Method not implemented.');
       pancardNo: '',
       purpose: '',
       transactionId: '',
-      volunteerName: this.getVolunteerName(),
+      volunteerName: '',
     };
   }
 

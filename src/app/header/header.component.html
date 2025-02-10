@@ -14,8 +14,15 @@
       <i class="fal fa-arrow-left"></i>
     </button>
     <div class="page-title">SHIKSHA FOUNDATION</div>
-    <button class="profile-btn" (click)="openProfile()">
-      <i class="fal fa-user-circle"></i>
-    </button>
+    <div class="profile-container">
+      <button class="profile-btn" (click)="toggleDropdown()">
+        <i class="fal fa-user-circle"></i>
+      </button>
+      
+      <div *ngIf="dropdownOpen" class="dropdown-menu">
+        <button (click)="logout()">Logout</button>
+      </div>
+    </div>
+    
   </div>
   
