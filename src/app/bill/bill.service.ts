@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
@@ -22,9 +22,6 @@ interface Bill {
   remark?: string;
   volunteerName: string;
 }
-declare var cordova: any;  // Declare the `cordova` variable
-
-declare const window: any; // Declare window as `any` to avoid TypeScript errors
 
 @Injectable({
   providedIn: 'root'
@@ -34,45 +31,47 @@ export class BillService {
 
   constructor(private http: HttpClient) {}
 
-  // Get Bills from the backend
+  // ✅ Fetch All Bills
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Save Bill to the backend
+  // ✅ Save a Bill
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill).pipe(
       catchError(this.handleError)
     );
   }
 
-  // View Bill PDF
-  viewBillPDF(billId: string): Promise<void> {
+  // ✅ View Bill PDF - Now returns Observable<string> instead of opening directly
+  viewBillPDF(billId: string): Observable<string> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
-    // Open in the default browser for APK or in a new window/tab for web
-    if (window.cordova && window.cordova.InAppBrowser) {
-      window.cordova.InAppBrowser.open(pdfUrl, '_system', 'location=yes');
-    } else {
-      window.open(pdfUrl, '_blank');
-    }
-    return Promise.resolve();
+    return this.http.get(pdfUrl, { responseType: 'text' }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Download Bill PDF
-  downloadBillPDF(billId: string): Promise<void> {
+  // ✅ Download Bill PDF - Properly fetches and downloads the file
+  downloadBillPDF(billId: string): void {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
-    // Open in the default browser for APK or in a new window/tab for web
-    if (window.cordova && window.cordova.InAppBrowser) {
-      window.cordova.InAppBrowser.open(pdfUrl, '_system', 'location=yes');
-    } else {
-      window.open(pdfUrl, '_blank');
-    }
-    return Promise.resolve();
+    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bill_${billId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, (error) => {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download the PDF.');
+    });
   }
 
-  // Export Bills to Excel
+  // ✅ Export Bills to Excel
   downloadExcel(bills: Bill[]): void {
     if (bills.length === 0) {
       alert('No bills available to export.');
@@ -103,13 +102,15 @@ export class BillService {
     XLSX.writeFile(wb, 'Bills.xlsx');
   }
 
-  private handleError(error: any): Observable<never> {
+  // ✅ Handle Errors Properly
+  private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred. Please try again.';
     if (error.status === 0) {
       errorMessage = 'Network error - please check if the backend server is running.';
     } else if (error.error?.message) {
       errorMessage = error.error.message;
     }
+    console.error('Error in HTTP request:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 }
