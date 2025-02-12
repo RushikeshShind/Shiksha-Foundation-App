@@ -50,14 +50,27 @@ export class BillService {
   // ✅ View Bill PDF - Now returns Observable<string> instead of opening directly
   viewBillPDF(billId: string): Observable<SafeResourceUrl> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
+  
     return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
       map((blob) => {
+        console.log('Received Blob:', blob); // ✅ Debugging: Check the actual response
+  
+        if (!blob || blob.size === 0) {
+          throw new Error('Empty response received.');
+        }
+  
         const pdfBlobUrl = window.URL.createObjectURL(blob);
+        console.log('Generated Blob URL:', pdfBlobUrl); // ✅ Check if the URL is generated
+  
         return this.sanitizer.bypassSecurityTrustResourceUrl(pdfBlobUrl);
       }),
-      catchError(this.handleError)
+      catchError((error) => {
+        console.error('Error fetching PDF:', error);
+        return throwError(() => new Error('Failed to fetch the bill PDF.'));
+      })
     );
   }
+  
   
 
   // ✅ Download Bill PDF - Properly fetches and downloads the file
