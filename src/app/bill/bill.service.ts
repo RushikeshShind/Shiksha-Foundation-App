@@ -29,9 +29,9 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
-  sanitizer: any;
+  
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   // ✅ Fetch All Bills
   getBills(): Observable<Bill[]> {
