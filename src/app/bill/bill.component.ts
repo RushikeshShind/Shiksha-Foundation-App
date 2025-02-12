@@ -101,22 +101,29 @@ throw new Error('Method not implemented.');
     }
   }
 
-  async viewBill(billId?: string): Promise<void> {
+  viewBill(billId?: string): void {
     if (!billId) {
       alert('Bill ID is required for viewing.');
       return;
     }
-    const rawUrl = `https://shiksha-backend.onrender.com/api/bills/download/${billId}`;
-    console.log('Generated PDF URL:', rawUrl);
-    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+    this.billService.viewBillPDF(billId).subscribe({
+      next: (url) => {
+        console.log('Fetched PDF URL:', url);
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      },
+      error: (error) => {
+        console.error('Error fetching PDF:', error);
+        alert('Failed to fetch the bill PDF.');
+      }
+    });
   }
 
-  async downloadPDF(billId?: string): Promise<void> {
+  downloadPDF(billId?: string): void {
     if (!billId) {
       alert('Bill ID is required for downloading.');
       return;
     }
-    window.open(`https://shiksha-backend.onrender.com/api/bills/download/${billId}`, '_blank');
+    this.billService.downloadBillPDF(billId);
   }
 
   private getEmptyBill(): Bill {
