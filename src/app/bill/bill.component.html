@@ -73,10 +73,12 @@
   </tbody>
 </table>
 
+
 <!-- PDF Viewer -->
 <div *ngIf="pdfUrl">
   <h3>Bill Preview</h3>
-  <iframe [src]="pdfUrl" width="100%" height="600px" style="border: none;"></iframe>
+  <iframe [attr.src]="pdfUrl" width="100%" height="600px" style="border: none;"></iframe>
 </div>
+
 
 
