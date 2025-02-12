@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer,SafeResourceUrl } from '@angular/platform-browser';
 
 interface Bill {
   id?: string;
@@ -47,29 +47,30 @@ export class BillService {
     );
   }
 
-  // ✅ View Bill PDF - Now returns Observable<string> instead of opening directly
-  viewBillPDF(billId: string): Observable<SafeResourceUrl> {
-    const pdfUrl = `${this.apiUrl}/download/${billId}`;
-  
-    return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
-      map((blob) => {
-        console.log('Received Blob:', blob); // ✅ Debugging: Check the actual response
-  
-        if (!blob || blob.size === 0) {
-          throw new Error('Empty response received.');
-        }
-  
-        const pdfBlobUrl = window.URL.createObjectURL(blob);
-        console.log('Generated Blob URL:', pdfBlobUrl); // ✅ Check if the URL is generated
-  
-        return this.sanitizer.bypassSecurityTrustResourceUrl(pdfBlobUrl);
-      }),
-      catchError((error) => {
-        console.error('Error fetching PDF:', error);
-        return throwError(() => new Error('Failed to fetch the bill PDF.'));
-      })
-    );
-  }
+ // ✅ Fetch the PDF and return a safe URL
+ viewBillPDF(billId: string): Observable<SafeResourceUrl> {
+  const pdfUrl = `${this.apiUrl}/download/${billId}`;
+
+  return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
+    map((blob) => {
+      console.log('Received PDF Blob:', blob); // ✅ Debugging
+
+      if (!blob || blob.size === 0) {
+        throw new Error('Empty response received.');
+      }
+
+      const pdfBlobUrl = window.URL.createObjectURL(blob);
+      console.log('Generated PDF Blob URL:', pdfBlobUrl); // ✅ Debugging
+
+      return this.sanitizer.bypassSecurityTrustResourceUrl(pdfBlobUrl);
+    }),
+    catchError((error) => {
+      console.error('Error fetching PDF:', error);
+      return throwError(() => new Error('Failed to fetch the bill PDF.'));
+    })
+  );
+}
+
   
   
 

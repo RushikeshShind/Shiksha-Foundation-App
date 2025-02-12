@@ -73,9 +73,10 @@
   </tbody>
 </table>
 
-<!-- PDF Viewer (only shown when a bill is selected) -->
+<!-- PDF Viewer -->
 <div *ngIf="pdfUrl">
   <h3>Bill Preview</h3>
-  <iframe [src]="pdfUrl" width="100%" height="500px"></iframe>
+  <iframe [src]="pdfUrl" width="100%" height="600px" style="border: none;"></iframe>
 </div>
+
 
