@@ -33,6 +33,9 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
+convertAmountToWords() {
+throw new Error('Method not implemented.');
+}
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
@@ -61,7 +64,6 @@ export class BillComponent implements OnInit {
     });
   }
 
-  // ✅ Add submitBill method
   submitBill(): void {
     if (!this.isValidBill(this.bill)) {
       alert('Please fill in all required fields.');
@@ -85,7 +87,6 @@ export class BillComponent implements OnInit {
     });
   }
 
-  // ✅ Add downloadExcel method
   downloadExcel(): void {
     if (this.bills.length === 0) {
       alert('No bills available to export.');
@@ -138,4 +139,3 @@ export class BillComponent implements OnInit {
     return bill.date.trim() !== '' && bill.name.trim() !== '' && bill.amountNumber > 0;
   }
 }
-
