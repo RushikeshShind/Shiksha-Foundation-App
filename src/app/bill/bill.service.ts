@@ -48,21 +48,21 @@ export class BillService {
   }
 
  // ✅ Fetch the PDF and return a safe URL
- viewBillPDF(billId: string): Observable<SafeResourceUrl> {
+ viewBillPDF(billId: string): Observable<string> {
   const pdfUrl = `${this.apiUrl}/download/${billId}`;
 
   return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
     map((blob) => {
-      console.log('Received PDF Blob:', blob); // ✅ Debugging
+      console.log('Received PDF Blob:', blob);
 
       if (!blob || blob.size === 0) {
         throw new Error('Empty response received.');
       }
 
       const pdfBlobUrl = window.URL.createObjectURL(blob);
-      console.log('Generated PDF Blob URL:', pdfBlobUrl); // ✅ Debugging
+      console.log('Generated PDF Blob URL:', pdfBlobUrl);
 
-      return this.sanitizer.bypassSecurityTrustResourceUrl(pdfBlobUrl);
+      return pdfBlobUrl; // ✅ Return plain Blob URL, no sanitizer needed
     }),
     catchError((error) => {
       console.error('Error fetching PDF:', error);
@@ -70,6 +70,7 @@ export class BillService {
     })
   );
 }
+
 
   
   

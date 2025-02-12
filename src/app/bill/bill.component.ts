@@ -108,9 +108,9 @@ throw new Error('Method not implemented.');
     }
   
     this.billService.viewBillPDF(billId).subscribe({
-      next: (safeUrl) => {
-        console.log('Fetched PDF Safe URL:', safeUrl);
-        this.pdfUrl = safeUrl; // ✅ Assign the safe URL
+      next: (blobUrl) => {
+        console.log('Fetched PDF Blob URL:', blobUrl);
+        this.pdfUrl = blobUrl; // ✅ Store direct Blob URL
       },
       error: (error) => {
         console.error('Error fetching PDF:', error);
