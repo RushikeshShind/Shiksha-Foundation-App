@@ -29,18 +29,15 @@ interface Bill {
   templateUrl: './bill.component.html',
   styleUrls: ['./bill.component.css'],
   standalone: true,
-  imports: [
-    FormsModule,
-    CommonModule,
-    HttpClientModule, // ✅ Required for API calls
-  ],
-  providers: [BillService] // ✅ Provide locally like StudentsComponent
+  imports: [FormsModule, CommonModule, HttpClientModule],
+  providers: [BillService]
 })
 export class BillComponent implements OnInit {
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
   errorMessage: string | null = null;
+  pdfUrl: string | null = null;
 
   constructor(private billService: BillService) {}
 
@@ -52,9 +49,7 @@ export class BillComponent implements OnInit {
     this.isLoading = true;
     this.billService.getBills().subscribe({
       next: (bills) => {
-        // Sort bills by date in descending order (newest first)
         this.bills = bills.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        console.log('Fetched Bills:', this.bills);
       },
       error: (err: HttpErrorResponse) => {
         console.error('Error fetching bills:', err);
@@ -66,6 +61,7 @@ export class BillComponent implements OnInit {
     });
   }
 
+  // ✅ Add submitBill method
   submitBill(): void {
     if (!this.isValidBill(this.bill)) {
       alert('Please fill in all required fields.');
@@ -89,48 +85,7 @@ export class BillComponent implements OnInit {
     });
   }
 
-  // ✅ Fix: Add convertAmountToWords method
-  convertAmountToWords(): void {
-    if (this.bill.amountNumber > 0) {
-      this.bill.amountWords = this.numberToWords(this.bill.amountNumber);
-    }
-  }
-
-  // ✅ Utility function to convert numbers to words
-  numberToWords(amount: number): string {
-    const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-    return words[amount] || amount.toString();
-  }
-
-  // ✅ Fix: Add viewBill method
-  async viewBill(billId?: string): Promise<void> {
-    if (!billId) {
-      alert('Bill ID is required for viewing.');
-      return;
-    }
-    try {
-      await this.billService.viewBillPDF(billId);
-    } catch (error) {
-      console.error('Error opening PDF:', error);
-      alert('Failed to open the PDF.');
-    }
-  }
-
-  // ✅ Fix: Add downloadPDF method
-  async downloadPDF(billId?: string): Promise<void> {
-    if (!billId) {
-      alert('Bill ID is required for downloading.');
-      return;
-    }
-    try {
-      await this.billService.downloadBillPDF(billId);
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-      alert('Failed to download the PDF.');
-    }
-  }
-
-  // ✅ Export Bills to Excel
+  // ✅ Add downloadExcel method
   downloadExcel(): void {
     if (this.bills.length === 0) {
       alert('No bills available to export.');
@@ -142,6 +97,22 @@ export class BillComponent implements OnInit {
       console.error('Error exporting Excel:', error);
       alert('Failed to export Excel file.');
     }
+  }
+
+  async viewBill(billId?: string): Promise<void> {
+    if (!billId) {
+      alert('Bill ID is required for viewing.');
+      return;
+    }
+    this.pdfUrl = `https://shiksha-backend.onrender.com/api/bills/download/${billId}`;
+  }
+
+  async downloadPDF(billId?: string): Promise<void> {
+    if (!billId) {
+      alert('Bill ID is required for downloading.');
+      return;
+    }
+    window.open(`https://shiksha-backend.onrender.com/api/bills/download/${billId}`, '_blank');
   }
 
   private getEmptyBill(): Bill {
@@ -167,3 +138,4 @@ export class BillComponent implements OnInit {
     return bill.date.trim() !== '' && bill.name.trim() !== '' && bill.amountNumber > 0;
   }
 }
+
