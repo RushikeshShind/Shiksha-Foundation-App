@@ -114,7 +114,7 @@ throw new Error('Method not implemented.');
       },
       error: (error) => {
         console.error('Error fetching PDF:', error);
-        alert('Failed to fetch the bill PDF.');
+        alert(error.message || 'Failed to fetch the bill PDF.');
       }
     });
   }
