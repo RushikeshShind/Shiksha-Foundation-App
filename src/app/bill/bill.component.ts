@@ -52,7 +52,8 @@ export class BillComponent implements OnInit {
     this.isLoading = true;
     this.billService.getBills().subscribe({
       next: (bills) => {
-        this.bills = bills;
+        // Sort bills by date in descending order (newest first)
+        this.bills = bills.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         console.log('Fetched Bills:', this.bills);
       },
       error: (err: HttpErrorResponse) => {
@@ -114,7 +115,8 @@ export class BillComponent implements OnInit {
       alert('Failed to open the PDF.');
     }
   }
-  
+
+  // ✅ Fix: Add downloadPDF method
   async downloadPDF(billId?: string): Promise<void> {
     if (!billId) {
       alert('Bill ID is required for downloading.');
@@ -127,8 +129,8 @@ export class BillComponent implements OnInit {
       alert('Failed to download the PDF.');
     }
   }
-  
 
+  // ✅ Export Bills to Excel
   downloadExcel(): void {
     if (this.bills.length === 0) {
       alert('No bills available to export.');
@@ -157,7 +159,7 @@ export class BillComponent implements OnInit {
       transactionId: '',
       chequeDetails: '',
       volunteerName: '',
-      remark:'',
+      remark: ''
     };
   }
 
