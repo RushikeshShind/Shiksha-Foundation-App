@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface Bill {
   id?: string;
@@ -40,9 +41,9 @@ throw new Error('Method not implemented.');
   bill: Bill = this.getEmptyBill();
   isLoading = false;
   errorMessage: string | null = null;
-  pdfUrl: string | null = null;
+  pdfUrl: SafeResourceUrl | null = null;
 
-  constructor(private billService: BillService) {}
+  constructor(private billService: BillService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.loadBills();
@@ -105,7 +106,9 @@ throw new Error('Method not implemented.');
       alert('Bill ID is required for viewing.');
       return;
     }
-    this.pdfUrl = `https://shiksha-backend.onrender.com/api/bills/download/${billId}`;
+    const rawUrl = `https://shiksha-backend.onrender.com/api/bills/download/${billId}`;
+    console.log('Generated PDF URL:', rawUrl);
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
   }
 
   async downloadPDF(billId?: string): Promise<void> {
