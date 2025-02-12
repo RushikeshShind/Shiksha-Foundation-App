@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
 interface Bill {
   id?: string;
@@ -28,6 +29,7 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
+  sanitizer: any;
 
   constructor(private http: HttpClient) {}
 
@@ -46,12 +48,17 @@ export class BillService {
   }
 
   // ✅ View Bill PDF - Now returns Observable<string> instead of opening directly
-  viewBillPDF(billId: string): Observable<string> {
+  viewBillPDF(billId: string): Observable<SafeResourceUrl> {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
-    return this.http.get(pdfUrl, { responseType: 'text' }).pipe(
+    return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
+      map((blob) => {
+        const pdfBlobUrl = window.URL.createObjectURL(blob);
+        return this.sanitizer.bypassSecurityTrustResourceUrl(pdfBlobUrl);
+      }),
       catchError(this.handleError)
     );
   }
+  
 
   // ✅ Download Bill PDF - Properly fetches and downloads the file
   downloadBillPDF(billId: string): void {

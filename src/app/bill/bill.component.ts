@@ -106,10 +106,11 @@ throw new Error('Method not implemented.');
       alert('Bill ID is required for viewing.');
       return;
     }
+  
     this.billService.viewBillPDF(billId).subscribe({
-      next: (url) => {
-        console.log('Fetched PDF URL:', url);
-        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      next: (safeUrl) => {
+        console.log('Fetched PDF Safe URL:', safeUrl);
+        this.pdfUrl = safeUrl;
       },
       error: (error) => {
         console.error('Error fetching PDF:', error);
@@ -117,6 +118,7 @@ throw new Error('Method not implemented.');
       }
     });
   }
+  
 
   downloadPDF(billId?: string): void {
     if (!billId) {
