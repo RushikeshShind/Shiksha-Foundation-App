@@ -88,12 +88,11 @@ export class VolunteersComponent implements OnInit {
   
       if (this.profileImage) {
         formData.append('profileImage', this.profileImage, this.profileImage.name);
+      } else {
+        formData.append('profileImage', ''); // Send an empty string instead of skipping
       }
   
-      // Debug FormData values
-      for (let pair of formData as any) {
-        console.log(pair[0] + ':', pair[1]);
-      }
+      console.log('Form Data:', formData); // Debugging
   
       this.volunteersService.submitVolunteerData(formData).subscribe(
         (response: Volunteer) => {
@@ -105,6 +104,7 @@ export class VolunteersComponent implements OnInit {
         },
         (error) => {
           console.error('Error Response:', error);
+          console.error('Backend Error Details:', error.error); // Log backend error
           this.errorMessage = 'An error occurred while submitting the volunteer data.';
         }
       );
@@ -112,6 +112,7 @@ export class VolunteersComponent implements OnInit {
       alert('Please fill out all required fields');
     }
   }
+  
   
   
   
