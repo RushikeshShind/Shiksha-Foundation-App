@@ -80,19 +80,22 @@ export class VolunteersComponent implements OnInit {
       alert('Only admins can add volunteers.');
       return;
     }
-
-    if (this.name && this.phoneNumber && this.profileImage) {
+  
+    if (this.name && this.phoneNumber) {  // Remove profileImage from required fields
       const formData = new FormData();
       formData.append('name', this.name);
       formData.append('phone_number', this.phoneNumber);
-      formData.append('profileImage', this.profileImage, this.profileImage.name);
-
+  
+      if (this.profileImage) {
+        formData.append('profileImage', this.profileImage, this.profileImage.name);
+      }
+  
       console.log('Form data:', formData);
-
+  
       this.volunteersService.submitVolunteerData(formData).subscribe(
         (response: Volunteer) => {
           console.log('Volunteer data submitted successfully:', response);
-          this.authService.createVolunteerCredentials(this.name, this.phoneNumber); // Credentials for volunteer
+          this.authService.createVolunteerCredentials(this.name, this.phoneNumber);
           this.resetForm();
           this.getVolunteers();
           this.showCard = false;
@@ -103,10 +106,11 @@ export class VolunteersComponent implements OnInit {
         }
       );
     } else {
-      console.log('Please fill out all fields');
-      alert('Please fill out all fields');
+      console.log('Please fill out all required fields');
+      alert('Please fill out all required fields');
     }
   }
+  
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
