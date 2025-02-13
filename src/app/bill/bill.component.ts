@@ -37,18 +37,6 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
-viewBill(arg0: string|undefined) {
-throw new Error('Method not implemented.');
-}
-downloadPDF(arg0: string|undefined) {
-throw new Error('Method not implemented.');
-}
-downloadExcel() {
-throw new Error('Method not implemented.');
-}
-convertAmountToWords() {
-throw new Error('Method not implemented.');
-}
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
@@ -118,6 +106,69 @@ throw new Error('Method not implemented.');
         this.isLoading = false;
       }
     });
+  }
+
+  // ✅ View PDF in modal
+  viewBill(billId?: string): void {
+    if (!billId) {
+      alert('Bill ID is required for viewing.');
+      return;
+    }
+
+    this.billService.viewBillPDF(billId).subscribe({
+      next: (pdfUrl) => {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl);
+        this.showModal = true;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error fetching bill PDF:', err);
+        alert('Failed to load the bill PDF.');
+      }
+    });
+  }
+
+  closePdfViewer(): void {
+    this.showModal = false;
+    this.pdfUrl = null;
+  }
+
+  // ✅ Download Bill PDF
+  downloadPDF(billId?: string): void {
+    if (!billId) {
+      alert('Bill ID is required for downloading.');
+      return;
+    }
+    this.billService.downloadBillPDF(billId);
+  }
+
+  // ✅ Convert Amount Number to Words
+  convertAmountToWords(): void {
+    const number = this.bill.amountNumber;
+    if (number <= 0) {
+      this.bill.amountWords = '';
+      return;
+    }
+
+    const a = [
+      '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+      'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+    ];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    function convert(n: number): string {
+      if (n < 20) return a[n];
+      if (n < 100) return b[Math.floor(n / 10)] + ' ' + a[n % 10];
+      if (n < 1000) return a[Math.floor(n / 100)] + ' Hundred ' + convert(n % 100);
+      if (n < 100000) return convert(Math.floor(n / 1000)) + ' Thousand ' + convert(n % 1000);
+      return convert(Math.floor(n / 100000)) + ' Lakh ' + convert(n % 100000);
+    }
+
+    this.bill.amountWords = convert(number) + ' Rupees Only';
+  }
+
+  // ✅ Export Bills to Excel
+  downloadExcel(): void {
+    this.billService.downloadExcel(this.bills);
   }
 
   private getEmptyBill(): Bill {
