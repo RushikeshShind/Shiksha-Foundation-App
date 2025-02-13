@@ -81,38 +81,39 @@ export class VolunteersComponent implements OnInit {
       return;
     }
   
-    if (this.name && this.phoneNumber) {  // Remove profileImage from required fields
+    if (this.name && this.phoneNumber) {
       const formData = new FormData();
       formData.append('name', this.name);
       formData.append('phone_number', this.phoneNumber);
   
-      // Append image only if it exists
       if (this.profileImage) {
         formData.append('profileImage', this.profileImage, this.profileImage.name);
-      } else {
-        formData.append('profileImage', ''); // Ensure empty value instead of skipping field
       }
   
-      console.log('Form data:', formData);
+      // Debug FormData values
+      for (let pair of formData as any) {
+        console.log(pair[0] + ':', pair[1]);
+      }
   
       this.volunteersService.submitVolunteerData(formData).subscribe(
         (response: Volunteer) => {
-          console.log('Volunteer data submitted successfully:', response);
+          console.log('Volunteer added successfully:', response);
           this.authService.createVolunteerCredentials(this.name, this.phoneNumber);
           this.resetForm();
           this.getVolunteers();
           this.showCard = false;
         },
         (error) => {
-          console.error('Error submitting volunteer data:', error);
+          console.error('Error Response:', error);
           this.errorMessage = 'An error occurred while submitting the volunteer data.';
         }
       );
     } else {
-      console.log('Please fill out all required fields');
       alert('Please fill out all required fields');
     }
   }
+  
+  
   
 
 
