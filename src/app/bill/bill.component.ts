@@ -74,16 +74,18 @@ export class BillComponent implements OnInit {
   }
 
   fetchLoggedInUser(): void {
-    this.billService.getLoggedInUser().subscribe({
-      next: (user: { name: string }) => {
-        this.loggedInUser = user.name;
-        this.bill.volunteerName = user.name;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('Error fetching logged-in user:', error);
-      }
-    });
+    const storedUser = localStorage.getItem('currentUser');
+    
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      this.loggedInUser = user.name;
+      this.bill.volunteerName = user.name;
+    } else {
+      console.warn('No logged-in user found.');
+    }
   }
+  
+  
 
   submitBill(): void {
     if (!this.isValidBill(this.bill)) {

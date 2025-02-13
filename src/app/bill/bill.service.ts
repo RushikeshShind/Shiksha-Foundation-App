@@ -28,32 +28,20 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
+  private userApiUrl = 'https://shiksha-backend.onrender.com/api/volunteers/';
 
   constructor(private http: HttpClient) {}
 
-  // ✅ Fetch Logged-In User (Fix: Returns Observable)
-  getLoggedInUser(): Observable<{ name: string }> {
-    const volunteerName = localStorage.getItem('volunteerName') || 'defaultUser'; // ✅ Get from storage
-    const apiUrl = `https://shiksha-backend.onrender.com/api/volunteers/${volunteerName}`;
-  
-    return this.http.get<{ name: string }>(apiUrl).pipe(
+  // ✅ Fetch Only the Logged-in User
+  getLoggedInUser(username: string): Observable<{ name: string }> {
+    const userUrl = `${this.userApiUrl}${username}`;
+    return this.http.get<{ name: string }>(userUrl).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error('API Error fetching logged-in user:', error);
-        let errorMessage = 'An unexpected error occurred. Please try again.';
-  
-        if (error.status === 0) {
-          errorMessage = 'Network error - Please check your internet connection or backend server.';
-        } else if (error.status === 404) {
-          errorMessage = 'Volunteer not found - Please log in again.';
-        } else if (error.status === 500) {
-          errorMessage = 'Internal Server Error - Try again later.';
-        }
-  
-        return throwError(() => new Error(errorMessage));
+        console.error('Error fetching logged-in user:', error);
+        return throwError(() => new Error('Failed to fetch logged-in user.'));
       })
     );
   }
-  
 
   // ✅ Fetch All Bills
   getBills(): Observable<Bill[]> {
