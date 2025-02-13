@@ -38,7 +38,18 @@
     <input type="text" id="transactionId" [(ngModel)]="bill.transactionId" name="transactionId" required>
 
     <label for="chequeDetails">Cheque Details</label>
-    <input type="text" id="chequeDetails" [(ngModel)]="bill.chequeDetails" name="chequeDetails">
+    <input type="text" id="chequeDetails" [(ngModel)]="bill.chequeDetails" name="chequeDetails" (input)="toggleChequeFields()">
+    
+    <div *ngIf="showChequeFields">
+      <label for="bankName">Bank Name</label>
+      <input type="text" id="bankName" [(ngModel)]="bill.bankName" name="bankName">
+
+      <label for="chequeNo">Cheque No.</label>
+      <input type="text" id="chequeNo" [(ngModel)]="bill.chequeNo" name="chequeNo">
+
+      <label for="chequeDate">Cheque Date</label>
+      <input type="date" id="chequeDate" [(ngModel)]="bill.chequeDate" name="chequeDate">
+    </div>
 
     <label for="remark">Remark</label>
     <input type="text" id="remark" [(ngModel)]="bill.remark" name="remark">

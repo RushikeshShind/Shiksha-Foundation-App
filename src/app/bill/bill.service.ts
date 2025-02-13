@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import { DomSanitizer,SafeResourceUrl } from '@angular/platform-browser';
 
 interface Bill {
   id?: string;
@@ -29,9 +28,16 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
-  
+  private userApiUrl = 'https://shiksha-backend.onrender.com/api/users/loggedInUser';
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient) {}
+
+  // ✅ Fetch Logged-In User (Fix: Returns Observable)
+  getLoggedInUser(): Observable<{ name: string }> {
+    return this.http.get<{ name: string }>(this.userApiUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   // ✅ Fetch All Bills
   getBills(): Observable<Bill[]> {
@@ -47,50 +53,39 @@ export class BillService {
     );
   }
 
- // ✅ Fetch the PDF and return a safe URL
- viewBillPDF(billId: string): Observable<string> {
-  const pdfUrl = `${this.apiUrl}/download/${billId}`;
+  // ✅ View PDF Bill
+  viewBillPDF(billId: string): Observable<string> {
+    const pdfUrl = `${this.apiUrl}/download/${billId}`;
+    return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
+      map((blob) => {
+        if (!blob || blob.size === 0) {
+          throw new Error('Empty response received.');
+        }
+        return window.URL.createObjectURL(blob);
+      }),
+      catchError((error) => throwError(() => new Error('Failed to fetch the bill PDF.')))
+    );
+  }
 
-  return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
-    map((blob) => {
-      console.log('Received PDF Blob:', blob);
-
-      if (!blob || blob.size === 0) {
-        throw new Error('Empty response received.');
-      }
-
-      const pdfBlobUrl = window.URL.createObjectURL(blob);
-      console.log('Generated PDF Blob URL:', pdfBlobUrl);
-
-      return pdfBlobUrl; // ✅ Return plain Blob URL, no sanitizer needed
-    }),
-    catchError((error) => {
-      console.error('Error fetching PDF:', error);
-      return throwError(() => new Error('Failed to fetch the bill PDF.'));
-    })
-  );
-}
-
-
-  
-  
-
-  // ✅ Download Bill PDF - Properly fetches and downloads the file
+  // ✅ Download Bill PDF
   downloadBillPDF(billId: string): void {
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
-    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Bill_${billId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, (error) => {
-      console.error('Error downloading PDF:', error);
-      alert('Failed to download the PDF.');
-    });
+    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
+      (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Bill_${billId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      (error) => {
+        console.error('Error downloading PDF:', error);
+        alert('Failed to download the PDF.');
+      }
+    );
   }
 
   // ✅ Export Bills to Excel
@@ -124,7 +119,7 @@ export class BillService {
     XLSX.writeFile(wb, 'Bills.xlsx');
   }
 
-  // ✅ Handle Errors Properly
+  // ✅ Handle Errors
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unexpected error occurred. Please try again.';
     if (error.status === 0) {

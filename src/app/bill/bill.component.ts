@@ -23,6 +23,9 @@ interface Bill {
   chequeDetails?: string;
   remark?: string;
   volunteerName: string;
+  bankName?: string;
+  chequeNo?: string;
+  chequeDate?: string;
 }
 
 @Component({
@@ -34,6 +37,15 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
+viewBill(arg0: string|undefined) {
+throw new Error('Method not implemented.');
+}
+downloadPDF(arg0: string|undefined) {
+throw new Error('Method not implemented.');
+}
+downloadExcel() {
+throw new Error('Method not implemented.');
+}
 convertAmountToWords() {
 throw new Error('Method not implemented.');
 }
@@ -42,11 +54,19 @@ throw new Error('Method not implemented.');
   isLoading = false;
   errorMessage: string | null = null;
   pdfUrl: SafeResourceUrl | null = null;
+  showModal = false;
+  loggedInUser: string | null = null;
+  showChequeFields = false;
 
   constructor(private billService: BillService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.loadBills();
+    this.fetchLoggedInUser();
+  }
+
+  toggleChequeFields(): void {
+    this.showChequeFields = !!this.bill.chequeDetails; 
   }
 
   loadBills(): void {
@@ -61,6 +81,18 @@ throw new Error('Method not implemented.');
       },
       complete: () => {
         this.isLoading = false;
+      }
+    });
+  }
+
+  fetchLoggedInUser(): void {
+    this.billService.getLoggedInUser().subscribe({
+      next: (user: { name: string }) => {
+        this.loggedInUser = user.name;
+        this.bill.volunteerName = user.name;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error fetching logged-in user:', error);
       }
     });
   }
@@ -88,48 +120,6 @@ throw new Error('Method not implemented.');
     });
   }
 
-  downloadExcel(): void {
-    if (this.bills.length === 0) {
-      alert('No bills available to export.');
-      return;
-    }
-    try {
-      this.billService.downloadExcel(this.bills);
-    } catch (error) {
-      console.error('Error exporting Excel:', error);
-      alert('Failed to export Excel file.');
-    }
-  }
-
-  viewBill(billId?: string): void {
-    if (!billId) {
-      alert('Bill ID is required for viewing.');
-      return;
-    }
-  
-    this.billService.viewBillPDF(billId).subscribe({
-      next: (blobUrl) => {
-        console.log('Fetched PDF Blob URL:', blobUrl);
-        this.pdfUrl = blobUrl; // ✅ Store direct Blob URL
-      },
-      error: (error) => {
-        console.error('Error fetching PDF:', error);
-        alert(error.message || 'Failed to fetch the bill PDF.');
-      }
-    });
-  }
-  
-  
-  
-
-  downloadPDF(billId?: string): void {
-    if (!billId) {
-      alert('Bill ID is required for downloading.');
-      return;
-    }
-    this.billService.downloadBillPDF(billId);
-  }
-
   private getEmptyBill(): Bill {
     return {
       date: '',
@@ -144,8 +134,12 @@ throw new Error('Method not implemented.');
       purpose: '',
       transactionId: '',
       chequeDetails: '',
-      volunteerName: '',
-      remark: ''
+      volunteerName: this.loggedInUser || '',
+      remark: '',
+      alternativeNo: '',
+      bankName: '',
+      chequeNo: '',
+      chequeDate: ''
     };
   }
 
