@@ -28,16 +28,32 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
-  private userApiUrl = 'https://shiksha-backend.onrender.com/api/users/loggedInUser';
 
   constructor(private http: HttpClient) {}
 
   // ✅ Fetch Logged-In User (Fix: Returns Observable)
   getLoggedInUser(): Observable<{ name: string }> {
-    return this.http.get<{ name: string }>(this.userApiUrl).pipe(
-      catchError(this.handleError)
+    const volunteerName = localStorage.getItem('volunteerName') || 'defaultUser'; // ✅ Get from storage
+    const apiUrl = `https://shiksha-backend.onrender.com/api/volunteers/${volunteerName}`;
+  
+    return this.http.get<{ name: string }>(apiUrl).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('API Error fetching logged-in user:', error);
+        let errorMessage = 'An unexpected error occurred. Please try again.';
+  
+        if (error.status === 0) {
+          errorMessage = 'Network error - Please check your internet connection or backend server.';
+        } else if (error.status === 404) {
+          errorMessage = 'Volunteer not found - Please log in again.';
+        } else if (error.status === 500) {
+          errorMessage = 'Internal Server Error - Try again later.';
+        }
+  
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
+  
 
   // ✅ Fetch All Bills
   getBills(): Observable<Bill[]> {
