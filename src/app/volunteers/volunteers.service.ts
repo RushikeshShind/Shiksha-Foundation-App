@@ -49,9 +49,13 @@ export class VolunteersService {
   }
 
   // Submit volunteer data (including profile image)
-  submitVolunteerData(formData: FormData): Observable<Volunteer> {
-    return this.http.post<Volunteer>(this.postUrl, formData);
-  }
+submitVolunteerData(formData: FormData): Observable<Volunteer> {
+  return this.http.post<Volunteer>(this.postUrl, formData, {
+    headers: {
+     
+    }
+  });
+}
 
   // Delete a volunteer by ID (Admin-only)
   deleteVolunteer(id: string): Observable<void> {

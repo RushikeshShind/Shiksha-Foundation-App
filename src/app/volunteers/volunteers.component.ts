@@ -86,8 +86,11 @@ export class VolunteersComponent implements OnInit {
       formData.append('name', this.name);
       formData.append('phone_number', this.phoneNumber);
   
+      // Append image only if it exists
       if (this.profileImage) {
         formData.append('profileImage', this.profileImage, this.profileImage.name);
+      } else {
+        formData.append('profileImage', ''); // Ensure empty value instead of skipping field
       }
   
       console.log('Form data:', formData);
@@ -111,6 +114,7 @@ export class VolunteersComponent implements OnInit {
     }
   }
   
+
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
