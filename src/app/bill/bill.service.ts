@@ -93,40 +93,46 @@ export class BillService {
     );
   }
 
-  // ✅ Export Bills to Excel (Anyone can export)
-  downloadExcel(bills: Bill[]): void {
-    if (bills.length === 0) {
-      alert('No bills available to export.');
-      return;
-    }
-
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
-      bills.map((bill, index) => ({
-        'Sr. No': index + 1,
-        'Receipt No.': bill.transactionId,
-        'Date': bill.date,
-        'Name': bill.name,
-        'M/s Name': bill.msName,
-        'Mobile No': bill.mobileNo,
-        'Email ID': bill.email,
-        'Amount': bill.amountNumber,
-        'Address': bill.address,
-        'Pancard No': bill.pancardNo,
-        'Purpose': bill.purpose,
-        'Remark': bill.remark || '',
-        'Volunteer': bill.volunteerName,
-        'Cheque Details': bill.chequeDetails || '',
-        'Alternative No': bill.alternativeNo || '',
-        'Bank Name': bill.bankName || '',
-        'Cheque No': bill.chequeNo || '',
-        'Cheque Date': bill.chequeDate || ''
-      }))
-    );
-
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Bills');
-    XLSX.writeFile(wb, 'Bills.xlsx');
+ // ✅ Export Bills to Excel (Only Admins can export)
+downloadExcel(bills: Bill[]): void {
+  // Check if the user is an admin
+  if (this.authService.getRole() !== 'admin') {
+    alert('Access Denied: Only admins can download Excel files.');
+    return;
   }
+
+  if (bills.length === 0) {
+    alert('No bills available to export.');
+    return;
+  }
+
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+    bills.map((bill, index) => ({
+      'Sr. No': index + 1,
+      'Receipt No.': bill.transactionId,
+      'Date': bill.date,
+      'Name': bill.name,
+      'M/s Name': bill.msName,
+      'Mobile No': bill.mobileNo,
+      'Email ID': bill.email,
+      'Amount': bill.amountNumber,
+      'Address': bill.address,
+      'Pancard No': bill.pancardNo,
+      'Purpose': bill.purpose,
+      'Remark': bill.remark || '',
+      'Volunteer': bill.volunteerName,
+      'Cheque Details': bill.chequeDetails || '',
+      'Alternative No': bill.alternativeNo || '',
+      'Bank Name': bill.bankName || '',
+      'Cheque No': bill.chequeNo || '',
+      'Cheque Date': bill.chequeDate || ''
+    }))
+  );
+
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Bills');
+  XLSX.writeFile(wb, 'Bills.xlsx');
+}
 
   // ✅ Handle Errors
   private handleError(error: HttpErrorResponse): Observable<never> {
