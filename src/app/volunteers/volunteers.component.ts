@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { VolunteersService } from './volunteers.service';
 import { AuthService } from '../auth.service';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
 import { CommonModule } from '@angular/common'; 
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
-
-
 
 @Component({
   selector: 'app-volunteers',
   templateUrl: './volunteers.component.html',
   styleUrls: ['./volunteers.component.css'],
   standalone: true,
-  imports: [RouterModule, FormsModule, CommonModule, HttpClientModule], 
+  imports: [FormsModule, CommonModule, HttpClientModule], 
   providers: [VolunteersService, AuthService]
 })
 export class VolunteersComponent implements OnInit {
@@ -22,43 +19,32 @@ export class VolunteersComponent implements OnInit {
   name = '';
   phoneNumber = '';
   profileImage: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null;
   volunteers: Volunteer[] = [];
   errorMessage: string | null = null;
-  isAdmin = false;  // Initialize the flag for Admin
+  isAdmin = false;
   isSubAdmin = false;
 
-  constructor(private volunteersService: VolunteersService, private authService: AuthService ,  private router: Router) {}
+  constructor(private volunteersService: VolunteersService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Ensure the login status and role are properly checked and set
     this.checkLoginStatus();
   }
 
-  // Check if the user is logged in and set the role
   checkLoginStatus(): void {
     const role = this.authService.getRole();
-    console.log('Logged-in user role:', role);
-  
     if (role === 'admin' || role === 'subadmin') {
       this.isAdmin = role === 'admin';
       this.isSubAdmin = role === 'subadmin';
-      this.getVolunteers(); // Fetch volunteers
+      this.getVolunteers();
     } else {
       alert('You do not have permission to access this data.');
-      if (this.router) {
-        this.router.navigate(['/login']);
-      }
-       // Redirect unauthorized users
+      this.router.navigate(['/login']);
     }
   }
-  
 
-  // Fetch volunteers from the service
   getVolunteers(): void {
     this.volunteersService.getVolunteers().subscribe(
       (data: Volunteer[]) => {
-        console.log('Volunteers fetched successfully:', data);
         this.volunteers = data;
       },
       (error) => {
@@ -69,9 +55,9 @@ export class VolunteersComponent implements OnInit {
 
   toggleCard(): void {
     if (this.isAdmin) {
-      this.showCard = !this.showCard;  // Allow only admins to toggle the form
+      this.showCard = !this.showCard;
     } else {
-      alert('Only admins have permission to create a volunteer.');
+      alert('Only admins can add volunteers.');
     }
   }
 
@@ -88,23 +74,16 @@ export class VolunteersComponent implements OnInit {
   
       if (this.profileImage) {
         formData.append('profileImage', this.profileImage, this.profileImage.name);
-      } else {
-        formData.append('profileImage', ''); // Send an empty string instead of skipping
       }
-  
-      console.log('Form Data:', formData); // Debugging
   
       this.volunteersService.submitVolunteerData(formData).subscribe(
         (response: Volunteer) => {
-          console.log('Volunteer added successfully:', response);
-          this.authService.createVolunteerCredentials(this.name, this.phoneNumber);
           this.resetForm();
           this.getVolunteers();
           this.showCard = false;
         },
         (error) => {
-          console.error('Error Response:', error);
-          console.error('Backend Error Details:', error.error); // Log backend error
+          console.error('Error:', error);
           this.errorMessage = 'An error occurred while submitting the volunteer data.';
         }
       );
@@ -112,25 +91,12 @@ export class VolunteersComponent implements OnInit {
       alert('Please fill out all required fields');
     }
   }
-  
-  
-  
-  
-
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
       this.profileImage = file;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-      };
-      reader.readAsDataURL(file);
-      console.log('File selected:', file.name);
-    } else {
-      console.log('No file selected');
     }
   }
 
@@ -138,38 +104,14 @@ export class VolunteersComponent implements OnInit {
     this.name = '';
     this.phoneNumber = '';
     this.profileImage = null;
-    this.imagePreview = null;
     this.errorMessage = null;
-  }
-
-  // Admin-only delete functionality
-  deleteVolunteer(volunteerId: string): void {
-    if (!this.isAdmin) {
-      alert('Only admins can delete volunteers.');
-      return;
-    }
-
-    if (confirm('Are you sure you want to delete this volunteer?')) {
-      this.volunteersService.deleteVolunteer(volunteerId).subscribe(
-        () => {
-          console.log('Volunteer deleted successfully:', volunteerId);
-          this.getVolunteers(); // Refresh the list after deletion
-        },
-        (error) => {
-          console.error('Error deleting volunteer:', error);
-        }
-      );
-    }
   }
 }
 
-// Volunteer interface (as before)
+// Volunteer Interface
 export interface Volunteer {
   id: string;
   name: string;
-  email: string;
-  phone: string;
-  phone_number: string; 
-  address: string;
+  phone_number: string;
   profileImage?: string;
 }

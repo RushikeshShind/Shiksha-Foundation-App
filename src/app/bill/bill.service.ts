@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { AuthService } from '../auth.service'; // Import AuthService
 
 interface Bill {
   id?: string;
@@ -21,6 +22,9 @@ interface Bill {
   chequeDetails?: string;
   remark?: string;
   volunteerName: string;
+  bankName?: string;
+  chequeNo?: string;
+  chequeDate?: string;
 }
 
 @Injectable({
@@ -28,37 +32,29 @@ interface Bill {
 })
 export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
-  private userApiUrl = 'https://shiksha-backend.onrender.com/api/volunteers/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-  // ✅ Fetch Only the Logged-in User
-  getLoggedInUser(username: string): Observable<{ name: string }> {
-    const userUrl = `${this.userApiUrl}${username}`;
-    return this.http.get<{ name: string }>(userUrl).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching logged-in user:', error);
-        return throwError(() => new Error('Failed to fetch logged-in user.'));
-      })
-    );
-  }
-
-  // ✅ Fetch All Bills
+  // ✅ Fetch All Bills (Anyone can access)
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  // ✅ Save a Bill
+  // ✅ Save a Bill (Anyone can save)
   saveBill(bill: Bill): Observable<Bill> {
     return this.http.post<Bill>(`${this.apiUrl}/add`, bill).pipe(
       catchError(this.handleError)
     );
   }
 
-  // ✅ View PDF Bill
+  // ❌ **Restrict View PDF to Admins**
   viewBillPDF(billId: string): Observable<string> {
+    if (this.authService.getRole() !== 'admin') {
+      return throwError(() => new Error('Access Denied: Only admins can view bill PDFs.'));
+    }
+
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     return this.http.get(pdfUrl, { responseType: 'blob' }).pipe(
       map((blob) => {
@@ -67,12 +63,17 @@ export class BillService {
         }
         return window.URL.createObjectURL(blob);
       }),
-      catchError((error) => throwError(() => new Error('Failed to fetch the bill PDF.')))
+      catchError(() => throwError(() => new Error('Failed to fetch the bill PDF.')))
     );
   }
 
-  // ✅ Download Bill PDF
+  // ❌ **Restrict Download PDF to Admins**
   downloadBillPDF(billId: string): void {
+    if (this.authService.getRole() !== 'admin') {
+      alert('Access Denied: Only admins can download bill PDFs.');
+      return;
+    }
+
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
     this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
       (blob) => {
@@ -92,7 +93,7 @@ export class BillService {
     );
   }
 
-  // ✅ Export Bills to Excel
+  // ✅ Export Bills to Excel (Anyone can export)
   downloadExcel(bills: Bill[]): void {
     if (bills.length === 0) {
       alert('No bills available to export.');
@@ -114,7 +115,11 @@ export class BillService {
         'Purpose': bill.purpose,
         'Remark': bill.remark || '',
         'Volunteer': bill.volunteerName,
-        'Cheque Details': bill.chequeDetails || ''
+        'Cheque Details': bill.chequeDetails || '',
+        'Alternative No': bill.alternativeNo || '',
+        'Bank Name': bill.bankName || '',
+        'Cheque No': bill.chequeNo || '',
+        'Cheque Date': bill.chequeDate || ''
       }))
     );
 
