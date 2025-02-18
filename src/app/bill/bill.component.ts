@@ -142,13 +142,12 @@ throw new Error('Method not implemented.');
   // ✅ Download Bill PDF
   downloadPDF(billId?: string): void {
     if (!billId) return;
-  
+
     this.successMessage = '';
     this.downloadedFilePath = '';
     
     this.isLoading = true; // Set loading state to true while downloading
     
-    // Call the service with 3 arguments
     this.billService.downloadBillPDF(
       billId, // Bill ID
       (isLoading) => { this.isLoading = isLoading; }, // Loading state callback
@@ -164,6 +163,8 @@ throw new Error('Method not implemented.');
       }
     );
   }
+
+  // Open downloaded file
   viewFile(): void {
     if (this.downloadedFilePath) {
       window.open(this.downloadedFilePath, '_blank');
@@ -171,6 +172,7 @@ throw new Error('Method not implemented.');
       alert('No file to view!');
     }
   }
+
   
 
   // ✅ Convert Amount Number to Words
