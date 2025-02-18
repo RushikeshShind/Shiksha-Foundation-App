@@ -74,7 +74,7 @@ export class BillService {
     );
   }
 
-  downloadBillPDF(billId: string, onLoading: (isLoading: boolean) => void, onSuccess: (filePath: string) => void): void {
+  downloadBillPDF(billId: string, onLoading: (isLoading: boolean) => void, onSuccess: (filePath: string) => void, p0: (error: any) => void): void {
     if (this.authService.getRole() !== 'admin') {
       alert('Access Denied: Only admins can download bill PDFs.');
       return;

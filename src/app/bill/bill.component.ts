@@ -49,10 +49,11 @@ throw new Error('Method not implemented.');
   loggedInUser: string | null = null;
   showChequeFields = false;
 
+  // Add new properties
+  successMessage: string = '';
+  downloadedFilePath: string = '';
+
   constructor(private billService: BillService, private sanitizer: DomSanitizer) {}
-// Add new properties
-successMessage: string = '';
-downloadedFilePath: string = '';
 
   ngOnInit(): void {
     this.loadBills();
@@ -60,7 +61,7 @@ downloadedFilePath: string = '';
   }
 
   toggleChequeFields(): void {
-    this.showChequeFields = !!this.bill.chequeDetails; 
+    this.showChequeFields = !!this.bill.chequeDetails;
   }
 
   loadBills(): void {
@@ -144,16 +145,34 @@ downloadedFilePath: string = '';
   
     this.successMessage = '';
     this.downloadedFilePath = '';
-  
+    
+    this.isLoading = true; // Set loading state to true while downloading
+    
+    // Call the service with 3 arguments
     this.billService.downloadBillPDF(
-      billId,
-      (isLoading) => { this.isLoading = isLoading; },
-      (filePath) => {
+      billId, // Bill ID
+      (isLoading) => { this.isLoading = isLoading; }, // Loading state callback
+      (filePath) => { // Success callback
         this.downloadedFilePath = filePath;
-        this.successMessage = 'File downloaded successfully!';
+        this.successMessage = `File downloaded successfully! It is located at: ${filePath}`;
+        this.isLoading = false; // Set loading state to false after download
+      },
+      (error) => {  // Error callback
+        console.error('Error downloading file:', error);
+        this.successMessage = 'Error downloading file. Please try again.';
+        this.isLoading = false;
       }
     );
   }
+  viewFile(): void {
+    if (this.downloadedFilePath) {
+      window.open(this.downloadedFilePath, '_blank');
+    } else {
+      alert('No file to view!');
+    }
+  }
+  
+
   // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
     const number = this.bill.amountNumber;
