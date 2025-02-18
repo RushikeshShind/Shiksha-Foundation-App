@@ -74,15 +74,16 @@ export class BillService {
     );
   }
 
-  // ❌ **Restrict Download PDF to Admins**
-  downloadBillPDF(billId: string): void {
+  downloadBillPDF(billId: string, onLoading: (isLoading: boolean) => void, onSuccess: (filePath: string) => void): void {
     if (this.authService.getRole() !== 'admin') {
       alert('Access Denied: Only admins can download bill PDFs.');
       return;
     }
-  
+
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
-  
+
+    onLoading(true); // Show loading indicator
+
     this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
       async (blob) => {
         if (blob && blob.size > 0) {
@@ -90,28 +91,34 @@ export class BillService {
           reader.readAsDataURL(blob);
           reader.onloadend = async () => {
             const base64data = reader.result?.toString().split(',')[1];
-  
+
             if (base64data) {
               try {
+                const filePath = `Bill_${billId}.pdf`;
                 await Filesystem.writeFile({
-                  path: `Bill_${billId}.pdf`,
+                  path: filePath,
                   data: base64data,
                   directory: Directory.Documents
                 });
-                alert('File downloaded successfully!');
+
+                onLoading(false); // Hide loading indicator
+                onSuccess(filePath); // Show success message with file path
               } catch (error) {
                 console.error('File saving error:', error);
                 alert('Failed to save the PDF.');
+                onLoading(false); // Hide loading indicator
               }
             }
           };
         } else {
           alert('Failed to fetch the bill PDF.');
+          onLoading(false); // Hide loading indicator
         }
       },
       (error) => {
         console.error('Error downloading PDF:', error);
         alert('Failed to download the PDF.');
+        onLoading(false); // Hide loading indicator
       }
     );
   }

@@ -37,6 +37,9 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
+viewPDF() {
+throw new Error('Method not implemented.');
+}
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
@@ -47,6 +50,9 @@ export class BillComponent implements OnInit {
   showChequeFields = false;
 
   constructor(private billService: BillService, private sanitizer: DomSanitizer) {}
+// Add new properties
+successMessage: string = '';
+downloadedFilePath: string = '';
 
   ngOnInit(): void {
     this.loadBills();
@@ -134,13 +140,20 @@ export class BillComponent implements OnInit {
 
   // ✅ Download Bill PDF
   downloadPDF(billId?: string): void {
-    if (!billId) {
-      alert('Bill ID is required for downloading.');
-      return;
-    }
-    this.billService.downloadBillPDF(billId);
-  }
+    if (!billId) return;
   
+    this.successMessage = '';
+    this.downloadedFilePath = '';
+  
+    this.billService.downloadBillPDF(
+      billId,
+      (isLoading) => { this.isLoading = isLoading; },
+      (filePath) => {
+        this.downloadedFilePath = filePath;
+        this.successMessage = 'File downloaded successfully!';
+      }
+    );
+  }
   // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
     const number = this.bill.amountNumber;

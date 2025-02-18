@@ -61,6 +61,18 @@
   </form>
 </div>
 
+<!-- Add loading spinner after the table -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<!-- Add success message section -->
+<div *ngIf="successMessage" class="success-message">
+  <p>{{ successMessage }}</p>
+  <button (click)="viewPDF()">Click to view PDF</button>
+  <button (click)="successMessage = ''">Close</button>
+</div>
+
 <h3>Existing Bills</h3>
 <button (click)="downloadExcel()">Download Excel</button>
 
@@ -77,8 +89,10 @@
       <td>{{ bill.name }}</td>
       <td>{{ bill.amountNumber }}</td>
       <td>
-        <button (click)="downloadPDF(bill.id)">📄 Download PDF</button>
-        <button (click)="viewBill(bill.id)">👁️ View Bill</button>
+        <!-- Updated download button -->
+        <button (click)="downloadPDF(bill.id)" [disabled]="isLoading">
+          {{ isLoading ? 'Downloading...' : '📄 Download PDF' }}
+        </button>
       </td>      
     </tr>
   </tbody>
