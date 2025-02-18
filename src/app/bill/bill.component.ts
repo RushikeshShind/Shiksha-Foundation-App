@@ -85,8 +85,6 @@ export class BillComponent implements OnInit {
     }
   }
   
-  
-
   submitBill(): void {
     if (!this.isValidBill(this.bill)) {
       alert('Please fill in all required fields.');
@@ -142,7 +140,7 @@ export class BillComponent implements OnInit {
     }
     this.billService.downloadBillPDF(billId);
   }
-
+  
   // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
     const number = this.bill.amountNumber;

@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../auth.service'; // Import AuthService
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 interface Bill {
   id?: string;
@@ -26,7 +27,7 @@ interface Bill {
   chequeNo?: string;
   chequeDate?: string;
 }
-
+declare var cordova: any; 
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +36,12 @@ export class BillService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
+  async requestPermissions() {
+    const perm = await Filesystem.requestPermissions();
+    if (perm.publicStorage !== 'granted') {
+      alert('Storage permission is required to download files.');
+    }
+  }
   // ✅ Fetch All Bills (Anyone can access)
   getBills(): Observable<Bill[]> {
     return this.http.get<Bill[]>(this.apiUrl).pipe(
@@ -73,18 +80,34 @@ export class BillService {
       alert('Access Denied: Only admins can download bill PDFs.');
       return;
     }
-
+  
     const pdfUrl = `${this.apiUrl}/download/${billId}`;
+  
     this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
-      (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Bill_${billId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+      async (blob) => {
+        if (blob && blob.size > 0) {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = async () => {
+            const base64data = reader.result?.toString().split(',')[1];
+  
+            if (base64data) {
+              try {
+                await Filesystem.writeFile({
+                  path: `Bill_${billId}.pdf`,
+                  data: base64data,
+                  directory: Directory.Documents
+                });
+                alert('File downloaded successfully!');
+              } catch (error) {
+                console.error('File saving error:', error);
+                alert('Failed to save the PDF.');
+              }
+            }
+          };
+        } else {
+          alert('Failed to fetch the bill PDF.');
+        }
       },
       (error) => {
         console.error('Error downloading PDF:', error);
@@ -92,6 +115,8 @@ export class BillService {
       }
     );
   }
+  
+  
 
  // ✅ Export Bills to Excel (Only Admins can export)
 downloadExcel(bills: Bill[]): void {
