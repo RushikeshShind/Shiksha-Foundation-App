@@ -37,32 +37,31 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
-pdfUrl: any;
-downloadExcel() {
-throw new Error('Method not implemented.');
-}
 viewPDF() {
-throw new Error('Method not implemented.');
-}
-showChequeFields: any;
-toggleChequeFields() {
-throw new Error('Method not implemented.');
-}
-submitBill() {
 throw new Error('Method not implemented.');
 }
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
   errorMessage: string | null = null;
+  pdfUrl: SafeResourceUrl | null = null;
+  showModal = false;
+  loggedInUser: string | null = null;
+  showChequeFields = false;
+
+  // Add new properties
   successMessage: string = '';
-  downloadedFilePath: string = ''; // Path where the file will be saved
+  downloadedFilePath: string = '';
 
   constructor(private billService: BillService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.loadBills();
     this.fetchLoggedInUser();
+  }
+
+  toggleChequeFields(): void {
+    this.showChequeFields = !!this.bill.chequeDetails;
   }
 
   loadBills(): void {
@@ -83,12 +82,61 @@ throw new Error('Method not implemented.');
 
   fetchLoggedInUser(): void {
     const storedUser = localStorage.getItem('currentUser');
+    
     if (storedUser) {
       const user = JSON.parse(storedUser);
+      this.loggedInUser = user.name;
       this.bill.volunteerName = user.name;
     } else {
       console.warn('No logged-in user found.');
     }
+  }
+  
+  submitBill(): void {
+    if (!this.isValidBill(this.bill)) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    this.isLoading = true;
+    this.billService.saveBill(this.bill).subscribe({
+      next: (savedBill) => {
+        alert('Bill saved successfully!');
+        this.bills.push(savedBill);
+        this.bill = this.getEmptyBill();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error saving bill:', err);
+        this.errorMessage = 'Failed to save the bill. Please try again.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // ✅ View PDF in modal
+  viewBill(billId?: string): void {
+    if (!billId) {
+      alert('Bill ID is required for viewing.');
+      return;
+    }
+
+    this.billService.viewBillPDF(billId).subscribe({
+      next: (pdfUrl) => {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl);
+        this.showModal = true;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error fetching bill PDF:', err);
+        alert('Failed to load the bill PDF.');
+      }
+    });
+  }
+
+  closePdfViewer(): void {
+    this.showModal = false;
+    this.pdfUrl = null;
   }
 
   // ✅ Download Bill PDF
@@ -97,9 +145,9 @@ throw new Error('Method not implemented.');
 
     this.successMessage = '';
     this.downloadedFilePath = '';
-
+    
     this.isLoading = true; // Set loading state to true while downloading
-
+    
     this.billService.downloadBillPDF(
       billId, // Bill ID
       (isLoading) => { this.isLoading = isLoading; }, // Loading state callback
@@ -116,14 +164,16 @@ throw new Error('Method not implemented.');
     );
   }
 
-  // Open downloaded file (Provide option to view the file)
+  // Open downloaded file
   viewFile(): void {
     if (this.downloadedFilePath) {
-      window.open(this.downloadedFilePath, '_blank'); // Open the file in a new tab
+      window.open(this.downloadedFilePath, '_blank');
     } else {
       alert('No file to view!');
     }
   }
+
+  
 
   // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
@@ -150,6 +200,11 @@ throw new Error('Method not implemented.');
     this.bill.amountWords = convert(number) + ' Rupees Only';
   }
 
+  // ✅ Export Bills to Excel
+  downloadExcel(): void {
+    this.billService.downloadExcel(this.bills);
+  }
+
   private getEmptyBill(): Bill {
     return {
       date: '',
@@ -164,7 +219,7 @@ throw new Error('Method not implemented.');
       purpose: '',
       transactionId: '',
       chequeDetails: '',
-      volunteerName: this.bill.volunteerName || '',
+      volunteerName: this.loggedInUser || '',
       remark: '',
       alternativeNo: '',
       bankName: '',
