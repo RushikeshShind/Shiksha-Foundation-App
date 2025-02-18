@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { AuthService } from '../auth.service'; // Import AuthService
 
 @Injectable({
@@ -13,14 +12,6 @@ export class BillService {
   private apiUrl = 'https://shiksha-backend.onrender.com/api/bills';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
-
-  // Request permissions for storage (Android)
-  async requestPermissions() {
-    const perm = await Filesystem.requestPermissions();
-    if (perm.publicStorage !== 'granted') {
-      alert('Storage permission is required to download files.');
-    }
-  }
 
   // ✅ Fetch All Bills (Anyone can access)
   getBills(): Observable<any[]> {
@@ -54,68 +45,24 @@ export class BillService {
     );
   }
 
-  // ✅ Download Bill PDF
-  downloadBillPDF(
-    billId: string,
-    onLoading: (isLoading: boolean) => void,
-    onSuccess: (filePath: string) => void,
-    onError: (error: any) => void
-  ): void {
+  // ✅ Download Bill PDF (Directly Open URL for Download)
+  downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void, p0: (error: any) => void): void {
     if (this.authService.getRole() !== 'admin') {
       alert('Access Denied: Only admins can download bill PDFs.');
       return;
     }
 
-    const pdfUrl = `${this.apiUrl}/download/${billId}`;
+    const fileUrl = `${this.apiUrl}/download/${billId}`;
 
-    onLoading(true); // Show loading indicator
+    // ✅ Trigger file download automatically
+    window.open(fileUrl, '_blank');
 
-    this.http.get(pdfUrl, { responseType: 'blob' }).subscribe(
-      async (blob) => {
-        if (blob && blob.size > 0) {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = async () => {
-            const base64data = reader.result?.toString().split(',')[1];
-
-            if (base64data) {
-              try {
-                const filePath = `Bill_${billId}.pdf`;
-                await Filesystem.writeFile({
-                  path: filePath,
-                  data: base64data,
-                  directory: Directory.Documents,
-                  encoding: Encoding.UTF8
-                });
-
-                onLoading(false); // Hide loading indicator
-                onSuccess(filePath); // Show success message with file path
-              } catch (error) {
-                console.error('File saving error:', error);
-                alert('Failed to save the PDF.');
-                onLoading(false); // Hide loading indicator
-                onError(error);
-              }
-            }
-          };
-        } else {
-          alert('Failed to fetch the bill PDF.');
-          onLoading(false); // Hide loading indicator
-          onError('Failed to fetch the bill PDF');
-        }
-      },
-      (error) => {
-        console.error('Error downloading PDF:', error);
-        alert('Failed to download the PDF.');
-        onLoading(false); // Hide loading indicator
-        onError(error);
-      }
-    );
+    // ✅ Success Message
+    onSuccess(fileUrl);
   }
 
   // ✅ Export Bills to Excel (Only Admins can export)
   downloadExcel(bills: any[]): void {
-    // Check if the user is an admin
     if (this.authService.getRole() !== 'admin') {
       alert('Access Denied: Only admins can download Excel files.');
       return;

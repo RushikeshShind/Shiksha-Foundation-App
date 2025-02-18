@@ -142,27 +142,30 @@ throw new Error('Method not implemented.');
   // ✅ Download Bill PDF
   downloadPDF(billId?: string): void {
     if (!billId) return;
-
+  
     this.successMessage = '';
     this.downloadedFilePath = '';
-    
-    this.isLoading = true; // Set loading state to true while downloading
-    
+  
+    this.isLoading = true; // ✅ Correct: Assigning boolean (true)
+  
     this.billService.downloadBillPDF(
-      billId, // Bill ID
-      (isLoading) => { this.isLoading = isLoading; }, // Loading state callback
-      (filePath) => { // Success callback
-        this.downloadedFilePath = filePath;
-        this.successMessage = `File downloaded successfully! It is located at: ${filePath}`;
-        this.isLoading = false; // Set loading state to false after download
+      billId,
+      (fileUrl: string) => { // ✅ Success callback
+        this.downloadedFilePath = fileUrl;
+        this.successMessage = `File download started! If not, click here: ${fileUrl}`;
+        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
       },
-      (error) => {  // Error callback
+      (error) => { // ✅ Error callback
         console.error('Error downloading file:', error);
         this.successMessage = 'Error downloading file. Please try again.';
-        this.isLoading = false;
+        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
+      },
+      (error) => { // ✅ Additional error callback
+        console.error('Additional error:', error);
       }
     );
   }
+  
 
   // Open downloaded file
   viewFile(): void {
