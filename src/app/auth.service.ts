@@ -7,6 +7,7 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
+
   private loggedIn = false;
   private role: string | null = null;
   private currentUser: Volunteer | null = null;
@@ -69,14 +70,31 @@ export class AuthService {
     }
     return this.currentUser;
   }
-
-  // ✅ Get role of the logged-in user
-  getRole(): string | null {
-    if (!this.role) {
-      this.role = localStorage.getItem('userRole');
+  getCurrentUser(): any {
+    const storedUser = localStorage.getItem('currentUser');
+    if (!storedUser) return null;
+    
+    try {
+      const user = JSON.parse(storedUser);
+      return {
+        name: user?.name || '',
+        role: user?.role || 'volunteer'
+      };
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+      return null;
     }
-    return this.role;
   }
+  // ✅ Get role of the logged-in user
+  getRole(): string {
+    const user = this.getCurrentUser();
+    return user?.role?.toLowerCase() || '';
+  }
+  getUserName(): string {
+    const user = this.getCurrentUser();
+    return user?.name?.trim() || '';
+  }
+
 
   // ✅ Check if user is logged in
   isLoggedIn(): boolean {

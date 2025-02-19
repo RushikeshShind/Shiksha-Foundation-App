@@ -84,11 +84,23 @@ throw new Error('Method not implemented.');
     const storedUser = localStorage.getItem('currentUser');
     
     if (storedUser) {
-      const user = JSON.parse(storedUser);
-      this.loggedInUser = user.name;
-      this.bill.volunteerName = user.name;
+      try {
+        const user = JSON.parse(storedUser);
+        this.loggedInUser = user.name;
+        this.bill.volunteerName = user.name;
+        
+        // Validate volunteer name format
+        if (typeof this.bill.volunteerName !== 'string') {
+          console.warn('Invalid volunteer name format');
+          this.bill.volunteerName = '';
+        }
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        this.loggedInUser = null;
+      }
     } else {
       console.warn('No logged-in user found.');
+      this.loggedInUser = null;
     }
   }
   

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators'; // Import tap operator
 import { map, catchError } from 'rxjs/operators';
 
@@ -27,23 +27,21 @@ export class VolunteersService {
 
   // Fetch a single volunteer by name
   getVolunteerByName(name: string): Observable<Volunteer> {
-    console.log(`Fetching volunteer with name: ${name}`);
-    const url = `${this.apiUrl}/${name}`;
-    console.log('Request URL:', url); // Log the URL being requested
-  
+    if (!name || typeof name !== 'string') {
+      return throwError(() => new Error('Invalid volunteer name'));
+    }
+    
+    const url = `${this.apiUrl}/${encodeURIComponent(name)}`;
     return this.http.get<Volunteer>(url).pipe(
       map((volunteer: Volunteer) => {
-        console.log('Volunteer fetched:', volunteer);
+        if (!volunteer?.name) {
+          throw new Error('Invalid volunteer data received');
+        }
         return volunteer;
       }),
       catchError((error: any) => {
-        console.error('Error fetching volunteer by name:', error);
-        if (error.status === 404) {
-          console.log('Volunteer not found:', name);
-        } else {
-          console.error('Unexpected error:', error);
-        }
-        throw error; // Re-throw the error to be handled by the caller
+        console.error('Error fetching volunteer:', error);
+        return throwError(() => error);
       })
     );
   }

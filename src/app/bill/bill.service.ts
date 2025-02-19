@@ -15,7 +15,18 @@ export class BillService {
 
   // ✅ Fetch All Bills (Anyone can access)
   getBills(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
+    const role = this.authService.getRole();
+    let url = this.apiUrl;
+    
+    // Add volunteer filter for non-admin users
+    if (role !== 'admin') {
+      const volunteerName = this.authService.getUserName();
+      if (volunteerName) {
+        url += `?volunteerName=${encodeURIComponent(volunteerName)}`;
+      }
+    }
+    
+    return this.http.get<any[]>(url).pipe(
       catchError(this.handleError)
     );
   }
