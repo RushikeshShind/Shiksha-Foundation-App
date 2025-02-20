@@ -37,6 +37,9 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
+viewPDF() {
+throw new Error('Method not implemented.');
+}
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
@@ -45,6 +48,8 @@ export class BillComponent implements OnInit {
   showModal = false;
   loggedInUser: string | null = null;
   showChequeFields = false;
+
+  // Add new properties
   successMessage: string = '';
   downloadedFilePath: string = '';
 
@@ -77,11 +82,14 @@ export class BillComponent implements OnInit {
 
   fetchLoggedInUser(): void {
     const storedUser = localStorage.getItem('currentUser');
+    
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         this.loggedInUser = user.name;
         this.bill.volunteerName = user.name;
+        
+        // Validate volunteer name format
         if (typeof this.bill.volunteerName !== 'string') {
           console.warn('Invalid volunteer name format');
           this.bill.volunteerName = '';
@@ -119,6 +127,7 @@ export class BillComponent implements OnInit {
     });
   }
 
+  // ✅ View PDF in modal
   viewBill(billId?: string): void {
     if (!billId) {
       alert('Bill ID is required for viewing.');
@@ -142,32 +151,35 @@ export class BillComponent implements OnInit {
     this.pdfUrl = null;
   }
 
+  // ✅ Download Bill PDF
   downloadPDF(billId?: string): void {
     if (!billId) return;
   
     this.successMessage = '';
     this.downloadedFilePath = '';
   
-    this.isLoading = true;
+    this.isLoading = true; // ✅ Correct: Assigning boolean (true)
   
     this.billService.downloadBillPDF(
       billId,
-      (fileUrl: string) => {
+      (fileUrl: string) => { // ✅ Success callback
         this.downloadedFilePath = fileUrl;
         this.successMessage = `File download started! If not, click here: ${fileUrl}`;
-        this.isLoading = false;
+        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
       },
-      (error) => {
+      (error) => { // ✅ Error callback
         console.error('Error downloading file:', error);
         this.successMessage = 'Error downloading file. Please try again.';
-        this.isLoading = false;
+        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
       },
-      (error) => {
-        console.error('Additional error handling:', error);
+      (error) => { // ✅ Additional error callback
+        console.error('Additional error:', error);
       }
     );
   }
+  
 
+  // Open downloaded file
   viewFile(): void {
     if (this.downloadedFilePath) {
       window.open(this.downloadedFilePath, '_blank');
@@ -176,6 +188,9 @@ export class BillComponent implements OnInit {
     }
   }
 
+  
+
+  // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
     const number = this.bill.amountNumber;
     if (number <= 0) {
@@ -200,6 +215,7 @@ export class BillComponent implements OnInit {
     this.bill.amountWords = convert(number) + ' Rupees Only';
   }
 
+  // ✅ Export Bills to Excel
   downloadExcel(): void {
     this.billService.downloadExcel(this.bills);
   }
