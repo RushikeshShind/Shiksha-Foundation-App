@@ -37,9 +37,6 @@ interface Bill {
   providers: [BillService]
 })
 export class BillComponent implements OnInit {
-viewPDF() {
-throw new Error('Method not implemented.');
-}
   bills: Bill[] = [];
   bill: Bill = this.getEmptyBill();
   isLoading = false;
@@ -48,8 +45,6 @@ throw new Error('Method not implemented.');
   showModal = false;
   loggedInUser: string | null = null;
   showChequeFields = false;
-
-  // Add new properties
   successMessage: string = '';
   downloadedFilePath: string = '';
 
@@ -82,14 +77,11 @@ throw new Error('Method not implemented.');
 
   fetchLoggedInUser(): void {
     const storedUser = localStorage.getItem('currentUser');
-    
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         this.loggedInUser = user.name;
         this.bill.volunteerName = user.name;
-        
-        // Validate volunteer name format
         if (typeof this.bill.volunteerName !== 'string') {
           console.warn('Invalid volunteer name format');
           this.bill.volunteerName = '';
@@ -127,7 +119,6 @@ throw new Error('Method not implemented.');
     });
   }
 
-  // ✅ View PDF in modal
   viewBill(billId?: string): void {
     if (!billId) {
       alert('Bill ID is required for viewing.');
@@ -151,35 +142,32 @@ throw new Error('Method not implemented.');
     this.pdfUrl = null;
   }
 
-  // ✅ Download Bill PDF
   downloadPDF(billId?: string): void {
     if (!billId) return;
   
     this.successMessage = '';
     this.downloadedFilePath = '';
   
-    this.isLoading = true; // ✅ Correct: Assigning boolean (true)
+    this.isLoading = true;
   
     this.billService.downloadBillPDF(
       billId,
-      (fileUrl: string) => { // ✅ Success callback
+      (fileUrl: string) => {
         this.downloadedFilePath = fileUrl;
         this.successMessage = `File download started! If not, click here: ${fileUrl}`;
-        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
+        this.isLoading = false;
       },
-      (error) => { // ✅ Error callback
+      (error) => {
         console.error('Error downloading file:', error);
         this.successMessage = 'Error downloading file. Please try again.';
-        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
+        this.isLoading = false;
       },
-      (error) => { // ✅ Additional error callback
-        console.error('Additional error:', error);
+      (error) => {
+        console.error('Additional error handling:', error);
       }
     );
   }
-  
 
-  // Open downloaded file
   viewFile(): void {
     if (this.downloadedFilePath) {
       window.open(this.downloadedFilePath, '_blank');
@@ -188,9 +176,6 @@ throw new Error('Method not implemented.');
     }
   }
 
-  
-
-  // ✅ Convert Amount Number to Words
   convertAmountToWords(): void {
     const number = this.bill.amountNumber;
     if (number <= 0) {
@@ -215,7 +200,6 @@ throw new Error('Method not implemented.');
     this.bill.amountWords = convert(number) + ' Rupees Only';
   }
 
-  // ✅ Export Bills to Excel
   downloadExcel(): void {
     this.billService.downloadExcel(this.bills);
   }
