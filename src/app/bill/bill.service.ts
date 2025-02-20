@@ -58,14 +58,8 @@ export class BillService {
 
   // ✅ Download Bill PDF (Directly Open URL for Download)
   downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void, p0: (error: any) => void): void {
-    if (this.authService.getRole() !== 'admin') {
-        alert('Access Denied: Only admins can download bill PDFs.');
-        return;
-    }
-
     const fileUrl = `${this.apiUrl}/download/${billId}`;
 
-    // ✅ Use fetch API to download without opening a new tab
     fetch(fileUrl, { method: 'GET' })
         .then(response => {
             if (!response.ok) {
@@ -74,23 +68,21 @@ export class BillService {
             return response.blob();
         })
         .then(blob => {
-            // ✅ Create a link element and trigger download
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `receipt_${billId}.pdf`; // ✅ Set file name
+            a.download = `receipt_${billId}.pdf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-
-            onSuccess(fileUrl); // ✅ Callback on success
+            onSuccess(fileUrl);
         })
         .catch(error => {
             console.error('Error downloading file:', error);
-            onError(error); // ✅ Callback on error
+            onError(error);
         });
-}
+  }
 
 
   // ✅ Export Bills to Excel (Only Admins can export)

@@ -158,22 +158,22 @@ throw new Error('Method not implemented.');
     this.successMessage = '';
     this.downloadedFilePath = '';
   
-    this.isLoading = true; // ✅ Correct: Assigning boolean (true)
-  
+    this.isLoading = true;
+
     this.billService.downloadBillPDF(
       billId,
-      (fileUrl: string) => { // ✅ Success callback
+      (fileUrl: string) => {
         this.downloadedFilePath = fileUrl;
         this.successMessage = `File download started! If not, click here: ${fileUrl}`;
-        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
+        this.isLoading = false;
       },
-      (error) => { // ✅ Error callback
+      (error) => {
         console.error('Error downloading file:', error);
         this.successMessage = 'Error downloading file. Please try again.';
-        this.isLoading = false; // ✅ Correct: Assigning boolean (false)
+        this.isLoading = false;
       },
-      (error) => { // ✅ Additional error callback
-        console.error('Additional error:', error);
+      (error) => {
+        console.error('Error:', error);
       }
     );
   }
