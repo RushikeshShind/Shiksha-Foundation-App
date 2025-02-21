@@ -57,7 +57,7 @@ export class BillService {
   }
 
   // ✅ Download Bill PDF (Directly Open URL for Download)
-downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void): void {
+downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void, p0: (error: any) => void): void {
   const fileUrl = `${this.apiUrl}/download/${billId}`;
 
   // Directly open the backend URL for download
