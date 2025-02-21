@@ -5,10 +5,10 @@
     <input type="date" id="date" [(ngModel)]="bill.date" name="date" required>
 
     <label for="name">Name</label>
-    <input type="text" id="name" [(ngModel)]="bill.name" name="name" required>
+    <input type="text" id="name" style='text-transform:uppercase' [(ngModel)]="bill.name" name="name" required>
 
     <label for="msName">M/S Name</label>
-    <input type="text" id="msName" [(ngModel)]="bill.msName" name="msName" required>
+    <input type="text" id="msName" style='text-transform:uppercase' [(ngModel)]="bill.msName" name="msName" required>
 
     <label for="amountNumber">Amount (in numbers)</label>
     <input type="number" id="amountNumber" [(ngModel)]="bill.amountNumber" name="amountNumber" required (input)="convertAmountToWords()">
@@ -17,7 +17,7 @@
     <input type="text" id="amountWords" [(ngModel)]="bill.amountWords" name="amountWords" readonly>
 
     <label for="address">Address</label>
-    <input type="text" id="address" [(ngModel)]="bill.address" name="address" required>
+    <input type="text" id="address" style='text-transform:uppercase' [(ngModel)]="bill.address" name="address" required>
 
     <label for="mobileNo">Mobile No.</label>
     <input type="text" id="mobileNo" [(ngModel)]="bill.mobileNo" name="mobileNo" required>
@@ -29,20 +29,20 @@
     <input type="email" id="email" [(ngModel)]="bill.email" name="email" required>
 
     <label for="pancardNo">Pancard No.</label>
-    <input type="text" id="pancardNo" [(ngModel)]="bill.pancardNo" name="pancardNo" required>
+    <input type="text" id="pancardNo" style='text-transform:uppercase' [(ngModel)]="bill.pancardNo" name="pancardNo" required>
 
     <label for="purpose">Purpose</label>
-    <input type="text" id="purpose" [(ngModel)]="bill.purpose" name="purpose" required>
+    <input type="text" id="purpose" style='text-transform:uppercase' [(ngModel)]="bill.purpose" name="purpose" required>
 
     <label for="transactionId">Transaction ID</label>
-    <input type="text" id="transactionId" [(ngModel)]="bill.transactionId" name="transactionId" required>
+    <input type="text" id="transactionId" style='text-transform:uppercase'  [(ngModel)]="bill.transactionId" name="transactionId" required>
 
     <label for="chequeDetails">Cheque Details</label>
-    <input type="text" id="chequeDetails" [(ngModel)]="bill.chequeDetails" name="chequeDetails" (input)="toggleChequeFields()">
+    <input type="text" id="chequeDetails" style='text-transform:uppercase' [(ngModel)]="bill.chequeDetails" name="chequeDetails" (input)="toggleChequeFields()">
     
     <div *ngIf="showChequeFields">
       <label for="bankName">Bank Name</label>
-      <input type="text" id="bankName" [(ngModel)]="bill.bankName" name="bankName">
+      <input type="text" id="bankName" style='text-transform:uppercase' [(ngModel)]="bill.bankName" name="bankName">
 
       <label for="chequeNo">Cheque No.</label>
       <input type="text" id="chequeNo" [(ngModel)]="bill.chequeNo" name="chequeNo">
@@ -52,7 +52,7 @@
     </div>
 
     <label for="remark">Remark</label>
-    <input type="text" id="remark" [(ngModel)]="bill.remark" name="remark">
+    <input type="text" id="remark" style='text-transform:uppercase' [(ngModel)]="bill.remark" name="remark">
 
     <label for="volunteerName">Volunteer Name</label>
     <input type="text" id="volunteerName" [(ngModel)]="bill.volunteerName" name="volunteerName" readonly>
