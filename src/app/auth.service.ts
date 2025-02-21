@@ -14,7 +14,7 @@ export class AuthService {
 
   // Admin credentials
   private users: Record<string, { password: string, role: string }> = {
-    'admin': { password: '123', role: 'admin' }, // Admin credentials
+    'admin': { password: 'niti@1911', role: 'admin' }, // Admin credentials
   };
 
   constructor(private volunteersService: VolunteersService) {}
