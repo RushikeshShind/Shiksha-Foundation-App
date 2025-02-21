@@ -57,32 +57,12 @@ export class BillService {
   }
 
   // ✅ Download Bill PDF (Directly Open URL for Download)
-  downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void, p0: (error: any) => void): void {
-    const fileUrl = `${this.apiUrl}/download/${billId}`;
+downloadBillPDF(billId: string, onSuccess: (fileUrl: string) => void, onError: (error: any) => void): void {
+  const fileUrl = `${this.apiUrl}/download/${billId}`;
 
-    fetch(fileUrl, { method: 'GET' })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to download file.');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `receipt_${billId}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            onSuccess(fileUrl);
-        })
-        .catch(error => {
-            console.error('Error downloading file:', error);
-            onError(error);
-        });
-  }
+  // Directly open the backend URL for download
+  window.open(fileUrl, '_blank');
+}
 
 
   // ✅ Export Bills to Excel (Only Admins can export)
